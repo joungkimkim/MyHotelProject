@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<!-- 사용자 CSS 추가 -->
+
+<th:block layout:fragment="css">
+    <style>
+
+    </style>
+
+</th:block>
+
+<div layout:fragment="content">
+
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div id='wrapper'>
+            <div class="carousel-item active" th:style="${'width:100%; height:700px'}">
+                <img src="/images/img/hotel1.jpg"class="d-block w-100" alt="..."
+                     id="img1">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/hotel2.jpg" class="d-block w-100" alt="..."
+                     th:style="${'width:300px; height:700px'}">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/hotel3.jpg" class="d-block w-100" alt="..."
+                     th:style="${'width:300px; height:700px'}">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+
+
+
+    <div class="roominfo">
+        <font size="10">호텔 오버튼만의 모던한 객실</font><br />
+        <font size="5">호텔 오버튼의 객실은 모던하면서도 품격 있는 라이프 스타일 공간으로<br />
+            고객님들께 집과 같이 보다 쾌적한 환경에서 지내실 수 있는 객실을 제공합니다.
+        </font>
+    </div>
+
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/images/img/deluxe.jpg" class="d-block w-100" width="300" height="700" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/sweet.jpg" class="d-block w-100" width="300" height="700" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/royal.jpg" class="d-block w-100" width="300" height="700" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+    <div class="facilityinfo">
+        <font size="10">다양한 서비스</font><br />
+        <font size="5">다양한 소셜 라이프(Social life)를 즐길 수 있는 라운지부터 <br />
+            수영장,퍼스널 트레이닝 스튜디오 그리고 레스토랑 겸 바인 다이닝 존을 경험할 수 있습니다.
+        </font>
+    </div>
+
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/images/img/lobby.jpg" class="d-block w-100" width="300" height="700" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/buffet.jpg" class="d-block w-100" width="300" height="700" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/images/img/gym.jpg" class="d-block w-100" width="300" height="700" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <br>
+    <div class="facilityinfo">
+        <font size="10">Thank you</font><br />
+        <font size="5">지금 바로 놀러오세요 <br />
+
+        </font>
+    </div>
+    </div>
+<br>
+
+</div>

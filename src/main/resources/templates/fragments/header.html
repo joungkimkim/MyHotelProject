@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="header">
+    <table width="100%" height="8%" bgcolor="#f1e3c4" class="header">
+        <tr>
+            <th><a href="/members/login" sec:authorize="isAnonymous()">로그인</a>
+                <div class="dropdown"  sec:authorize="isAuthenticated()">
+                    <button class="btn btn-Light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                            th:text="${name} + '님 환영합니다.'">
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="/admin/items" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">객실 관리</a>
+                            <a class="dropdown-item" href="/members/logout" sec:authorize="isAuthenticated()">로그아웃</a>
+                            <a class="dropdown-item" href="/profile/myInfoAS" sec:authorize="hasAnyAuthority('ROLE_USER')">정보 수정</a>
+                        </li>
+                    </ul>
+                </div>
+            </th>
+            <th><a href="/room/standard">객실 정보</a></th>
+            <th><a href="/room/adminReservationHist" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">예약 조회</a>
+                <a href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">장바구니</a>
+            </th>
+            <th><a href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER')">예약하기</a>
+                <a class="dropdown-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" href="/admin/item/new">객실 등록</a></th>
+            <th><a href="/"><img src="https://raw.githubusercontent.com/raccoon-ccoder/Hotel_Overton/master/data/logo.png"
+                                 width="175" height="140" alt="HOME"></a></th>
+            <th><a href="/faq/boardLists">고객의 소리</a></th>
+            <th><a href="/map">오시는 길</a></th>
+            <th><a href="/room/reservationHist" sec:authorize="hasAnyAuthority('ROLE_USER')">예약내역</a></th>
+        </tr>
+    </table>
+</div>
+</html>

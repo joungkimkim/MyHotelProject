@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout1}">
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+                     $("searchBtn").on("click",function(e){
+                         e.preventDefault(); //검색버튼 클릭시 form 태그 전송을 막습니다.
+                         page(0);
+                     });
+                 });
+            function page(page){
+                var searchDateType = $("#searchDateType").val();
+                var searchBy = $("#searchBy").val();
+                var searchQuery = $("#searchQuery").val();
+
+                location.href="/faq/boardLists/" + page + "?searchDateType=" + searchDateType
+                 + "&searchBy=" + searchBy
+                + "&searchQuery=" + searchQuery;
+            }
+
+    </script>
+</th:block>
+<!-- 사용자 CSS 추가 -->
+
+<th:block layout:fragment="css">
+    <style>
+        #btn{
+            margin-top:15px;
+            margin-bottom:15px;
+            background-color: #382f24;
+            width:120px;
+            height:50px;
+            border: none;
+            font-size:medium;
+            color:#f1ebd5;
+            }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+
+
+<div id="wrapper">
+ <h1>고객의 소리</h1>
+
+    <div id="listcomment">
+        호텔 오버톤은 언제나 고객의 목소리에 귀기울이고 있습니다.<br/>
+        고객님들의 소중한 충고와 격려, 또는 제안의 말씀을 주시면 더 나은 서비스로 보답하겠습니다.<br/>
+    </div>
+    <form th:action="@{'/faq/boardLists/'+${boards.number}}" role="form" method="get" th:object="${boards}">
+    <table class="inquiryInfo" style="border:1px solid black;margin-left:auto;margin-right:auto;">
+        <thead>
+        <tr id="list">
+            <td>전체 선택</td>
+            <td>no</td>
+            <td>작성자</td>
+            <td>제목</td>
+            <td>작성일 </td>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="board, status : ${boards.getContent()}">
+
+                <td align="center" th:text="${board.id}"></td>
+                <td align="center" th:text="${board.writer}"></td>
+                <td align="center"><a th:href="'/faq/detail/'+${board.id}" th:text="${board.title}"></a></td></b>
+                <td align="center" th:text="${board.writer}"></td>
+            </tr>
+        </tbody>
+        <tr align="right">
+            <td colspan="4"><input type="button" id="btn" value="작성"  sec:authorize="isAuthenticated()" onclick="location.href='/faq/write'" /></td>
+        </tr>
+    </table>
+    <div th:with="start=${(boards.number/maxPage)*maxPage +1},
+            end=(${(boards.totalPages == 0) ? 1 : (start + (maxPage-1) < boards.totalPages ?
+            start + (maxPage - 1) : boards.totalPages)})">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${boards.number eq 0}?'disabled' : 'defaultText'">
+                <a th:href="${boards.first} ? '#' :@{/faq/boardLists(page=${boards.number})}"
+                   aria-label='Previous' class="page-link">
+                    <span aria-hidden="true">Previous</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
+                th:classappend="${boards.number eq page-1}?'active':'defaultText'">
+                <a th:href="@{/faq/boardLists(page=${page})}"
+                   th:inline="text" class="page-link">[[${page}]]</a>
+            </li>
+            <li class="page-item" th:classappend="${boards.number+1 ge boards.totalPages}?'disabled' : 'defaultText'">
+                <a th:href="${boards.last} ? '#' : @{/faq/boardLists(page=${boards.number + 2})}"
+                   aria-label="Next" class="page-link">
+                    <span aria-hidden="true">Next</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="d-flex justify-content-center" th:object="${boardSearchDto}">
+        <select th:field="*{searchDateType}" class="form-control me-2 p-2 selectSize">
+            <option value="all">전체기간</option>
+            <option value="1d">1일</option>
+            <option value="1w">1주</option>
+            <option value="1m">1개월</option>
+            <option value="6m">6개월</option>
+        </select>
+        <select th:field="*{searchBy}" class="form-control me-2 p-2 selectSize">
+            <option value="title">제목</option>
+            <option value="writer">작성자</option>
+        </select>
+        <input th:field="*{searchQuery}" type="text" class="form-control me-3 p-2 inputSize" placeholder="검색어를 입력해주세요">
+        <button id="searchBtn" type="submit" class="form-control btn btn-success p-2 findButton">검색</button>
+    </div>
+    </form>
+</div>
+</div>

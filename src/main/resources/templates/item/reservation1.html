@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+                    $("searchBtn").on("click",function(e){
+                      //검색버튼 클릭시 form 태그 전송을 막습니다.
+                        page(0);
+                    });
+                });
+
+                function page(page){
+                    var searchRoomType = $("#RoomType").val();
+                    var searchCheckIn = $("#checkIns").val();
+                    var searchCheckOut = $("#checkOuts").val();
+                    var searchAdultCount = $("#adultCont").val();
+                     var searchChildrenCount = $("#childCount").val();
+                    var searchPrice = $("#pricess").val();
+
+                    location.href="/user/reservations/" + page + "?searchRoomType=" + searchRoomType
+                     + "&searchCheckIn=" + searchCheckIn  + "&searchCheckOut=" + searchCheckOut  + "&searchAdultCount=" + searchAdultCount
+                      + "&searchChildrenCount=" + searchChildrenCount  + "&searchPrice=" + searchPrice;
+                }
+
+                function reservationCheck(){
+                 var checkIn = $('#r_checkin').val();
+                 var checkOut = $('#r_checkout').val();
+                 var adult = $('#r_adults').val();
+
+                    if (checkIn == "") {
+                        alert("체크인 날짜를 선택해주세요.");
+                        regForm.r_checkin.focus();
+                        return false;
+                    }
+                    if (checkIn > checkOut) {
+                        alert("날짜를 다시 선택해주세요");
+                        regForm.r_checkin.focus();
+                        return false;
+                    }
+
+                    if (checkOut == "") {
+                        alert("체크아웃 날짜를 선택해주세요.");
+                        regForm.r_checkout.focus();
+                        return false;
+                    }
+
+                    if (adult < 1) {
+                        alert("성인 인원수를 선택해주세요");
+                        regForm.r_adults.focus();
+                        return false;
+                    }
+
+                    if (checkOut <= checkIn) {
+                        alert("체크아웃 날짜를 다시 선택해주세요");
+                        return false;
+                    }
+                    return true;
+                }
+    </script>
+</th:block>
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        <style>
+         #btn{
+             margin-top:15px;
+             margin-bottom:15px;
+             background-color: #382f24;
+             width:120px;
+             height:50px;
+             border: none;
+             font-size:medium;
+             color:#f1ebd5;
+             }
+    </style>
+    </style>
+</th:block>
+
+<div layout:fragment="content" style="margin-left:25%;margin-right:25%">
+
+    <br/><br />
+    &nbsp;&nbsp;&nbsp; <font size="20">객실예약</font><br />
+
+    <table align="center" class="reservelist1">
+        <tr id="list1">
+            <td id="step1">날짜,인원 선택</td>
+            <td id="step3">객실 및 옵션 선택</td>
+        </tr>
+    </table>
+    <form name="regForm"  th:action="@{'/user/reservations/'+${items.number}}" method="get" >
+        <table th:style="${'width:100%; text-align: center'}" class="reserve1" >
+            <tr align="center" style="color:#a0a0a0; font-weight:bold;">
+                <td>체크인</td>
+                <td>체크아웃</td>
+                <td>성인</td>
+                <td>어린이</td>
+                <td>방 종류</td>
+                <td>가격</td>
+            </tr>
+            <tr align="center" th:object="${itemSearchDto}">
+                <input type="hidden" id="checkIns" th:value="${itemSearchDto.searchCheckIn}">
+                <td><input type="date" name="r_checkin" id="r_checkin" th:field="*{searchCheckIn}" min='<%=now %>' /></td>
+                <input type="hidden" id="checkOuts" th:value="${itemSearchDto.searchCheckOut}">
+                <td><input type="date" name="r_checkout" id="r_checkout" th:field="*{searchCheckOut}" /></td>
+                <input type="hidden" id="adultCont" th:value="${itemSearchDto.searchAdultCount}">
+                <td><input type="number" name="r_adults" id="r_adults" min="1" value="1" th:field="*{searchAdultCount}"/></td>
+                <input type="hidden" id="childCount" th:value="${itemSearchDto.searchChildrenCount}">
+                <td><input type="number" name="r_kids"  value="0" min="0" th:field="*{searchChildrenCount}"/></td>
+                <td><span class="me-1">
+                    <input type="hidden" id="RoomType" th:value="${itemSearchDto.searchRoomType}">
+                    <select th:field="*{searchRoomType}" class="form" >
+                        <option value="DELUXE">디럭스룸</option>
+                        <option value="ROYAL">로얄룸</option>
+                        <option value="STANDARD">스탠다드룸</option>
+                        <option value="SWEET">스위트룸</option>
+                    </select>
+                </span></td>
+                <td><span class="me-1">
+                    <input type="hidden" id="pricess" th:value="${itemSearchDto.searchPrice}">
+                    <select th:field="*{searchPrice}" class="form">
+                        <option value="10000">10000</option>
+                        <option value="20000">20000</option>
+                        <option value="30000">30000</option>
+                        <option value="40000">40000</option>
+                    </select>
+                </span></td>
+
+            </tr>
+            <div id="search">
+            <td><input type="submit" value="검색" id="searchBtn"/></td>
+            </div>
+            <tr align="center">
+                <td colspan="5">예약을 원하는 옵션을 선택해주세요</td>
+            </tr>
+        </table>
+    </form>
+    <form method="get" enctype="multipart/form-data" th:object="${itemSearchDto}">
+        <th:block th:each="item, status: ${items.getContent()}"
+                  th:if="${itemSearchDto.searchRoomType} != null and  ${itemSearchDto.searchPrice} != null and ${itemSearchDto.searchCheckIn} != null and ${itemSearchDto.searchCheckOut} != null">
+            <table width="80%" align="center" class="reserveResult">
+                <tr align="center" id="line">
+                    <td width="30%" id="line"><img th:src="${item.imgUrl}" width="280" height="200"></td>
+                    <td width="30%" id="line">
+                        <table>
+                            <div>
+
+                                <h1 th:if="${item.stockNumber}>0">SELL</h1>
+                                <h1 th:if="${item.stockNumber}<=0">SOLD_OUT</h1>
+                            </div>
+
+                            <tr align="center">
+                                <h3>[[${item.type}]]</h3>
+                            </tr>
+                            <tr align="left">
+                                <td> 객실크기 : [[${item.size}]]㎡</td>
+                            </tr>
+                            <tr align="left">
+                                <td>최대 수용 인원 :[[${item.totalCount}]]명</td>
+                            </tr>
+
+                <tr>
+                <input type="hidden" id="checkIns" th:value="${itemSearchDto.searchCheckIn}">
+                <td><input type="hidden"  th:field="*{searchCheckIn}" min='<%=now %>' /></td>
+                <input type="hidden" id="checkOuts" th:value="${itemSearchDto.searchCheckOut}">
+                <td><input type="hidden"  th:field="*{searchCheckOut}" /></td>
+                <input type="hidden" id="adultCont" th:value="${itemSearchDto.searchAdultCount}">
+                <td><input type="hidden" min="1" value="1" th:field="*{searchAdultCount}"/></td>
+                <input type="hidden" id="childCount" th:value="${itemSearchDto.searchChildrenCount}">
+                <td><input type="hidden" name="r_kids"  value="0" min="0" th:field="*{searchChildrenCount}"/></td>
+                <td><span class="me-1">
+                    <input type="hidden" id="RoomType" th:value="${itemSearchDto.searchRoomType}"></span>
+                </td>
+                <td><input type="hidden"  th:field="*{searchRoomType}"></td>
+                <td><input type="hidden"  th:field="*{searchPrice}"></td>
+                <td><input type="hidden" id="pricess" th:value="${itemSearchDto.searchPrice}"></td>
+                </tr>
+                    </td>
+
+                    <td width="25%" id="line"><input type="text" id="prices" th:text="${item.price}" readonly/>원  (1박)</b></td>
+                    <td id="line"><input type="submit" id="btn2" value="예약하기" th:formaction="@{'/user/reservation3/'+${item.id}}"></td>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                </tr>
+
+
+            </table>
+            </table>
+        </th:block>
+
+
+        <th:block>
+            <div th:if="${itemSearchDto.searchRoomType} != null and  ${itemSearchDto.searchPrice} != null and ${itemSearchDto.searchCheckIn} != null
+            and ${itemSearchDto.searchCheckOut} != null and ${items.totalPages} > 0"
+                 th:with="start=${(items.number/maxPage)*maxPage +1},
+        end=(${(items.totalPages == 0) ?
+        1 : (start + (maxPage-1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${items.first}?'disabled' : 'defaultText'">
+                        <a th:onclick="'javascript:page('+${items.number - 1} + ')'" aria-label='Previous'
+                           class="page-link">
+                            <span aria-hidden="true">Previous</span>
+                        </a>
+                    </li>
+
+                    <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
+                        th:classappend="${items.number eq page-1}?'active':''">
+                        <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
+                           class="page-link">[[${page}]]</a>
+                    </li>
+                    <li class="page-item" th:classappend="${items.last}?'disabled'">
+                        <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label="Next"
+                           class="page-link">
+                            <span aria-hidden="true">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </th:block>
+    </form>
+
+    <br /><br /><br /><br /><br /><br /><br />
+
+
+
+
+</div>
+</html>

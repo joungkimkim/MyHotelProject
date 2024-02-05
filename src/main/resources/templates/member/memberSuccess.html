@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<!-- 사용자 CSS 추가 -->
+<th:block layout:fragment="css">
+    <style>
+        .fieldError{
+          color: #bd2130;
+         }
+    </style>
+</th:block>
+<!-- 사용자 스크립트 추가 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function(){
+          var errorMessage = [[${errorMessage}]];
+          if(errorMessage != null){
+            alert(errorMessage);
+          }
+        });
+    </script>
+</th:block>
+
+<div layout:fragment="content">
+    <h1 style="text-align:center">회원가입</h1>
+
+    <table align="center" class="joinlist">
+        <tr id="list">
+            <td id="list1">가입정보</td>
+            <td id="list2">가입완료</td>
+        </tr>
+    </table>
+
+    <table align="center" class="joinFinish">
+        <tr align="center">
+            <td colspan="5">
+
+                    <b>환영합니다!<br />
+                        <b th:text="${name} + '님 회원가입을 축하드립니다. 호텔 오버튼의 새로운 이메일은 ' + ${email} + '입니다.'"></b>
+                            <input type="button" value="시작하기" id="btnProc" onclick="location.href='/'"><br />
+
+
+
+            </td>
+        </tr>
+    </table>
+
+</div>
+</html>
