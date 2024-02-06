@@ -1,7 +1,9 @@
 package com.shop.controller;
 
 
+import com.shop.constant.ReservationStatus;
 import com.shop.constant.Role;
+import com.shop.constant.RoomType;
 import com.shop.dto.*;
 import com.shop.entity.Comment;
 import com.shop.entity.Item;
@@ -52,18 +54,28 @@ private final HttpSession httpSession;
         model.addAttribute("List",reservationService.getmemberIdList(principal,httpSession));
         model.addAttribute("reservationId",reservationId);
         model.addAttribute("items",items);
+        model.addAttribute("cancel",ReservationStatus.CANCEL.getStringValue());
         model.addAttribute("itemSearchDto",itemSearchDto);
         return "/order/reservationHist";
     }
     @GetMapping( value = {"/adminReservationHist","/adminReservationHist/{page}"})
     public String adminReservationHist(Model model, HttpSession httpSession,
-                                  Principal principal,ItemSearchDto itemSearchDto,@PathVariable("page") Optional<Integer> page, ReservationDto reservationDto){
+                                  Principal principal,ItemSearchDto itemSearchDto,@PathVariable("page") Optional<Integer> page, ReservationSearchDto reservationSearchDto){
+        if(reservationSearchDto.getSearchQuery() == null || reservationSearchDto.getSearchQuery().isEmpty())
+        {
+            reservationSearchDto.setSearchQuery("");
+
+        }
+
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
         Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable);
+        Page<Reservation> reservations = reservationService.getAdminReservationPage(reservationSearchDto,pageable);
         String name = memberService.loadMemberName(principal,httpSession);
         model.addAttribute("name",name);
         model.addAttribute("List",reservationService.getAll());
+        model.addAttribute("reservationSearchDto",reservationSearchDto);
         model.addAttribute("ItemSearchDto",new ItemSearchDto());
+        model.addAttribute("reservations",reservations);
         model.addAttribute("maxPage", 5);
         model.addAttribute("items",items);
         return "/order/adminReservation";
@@ -75,11 +87,11 @@ private final HttpSession httpSession;
     }
 
 
-    @DeleteMapping(value = "/deleteById/{reservationId}")
+    @PostMapping(value = "/deleteById/{reservationId}")
     public @ResponseBody
-    ResponseEntity deleteById(@PathVariable("reservationId")Long reservationId, Principal principal, ItemFormDto itemFormDto, Item item, Reservation reservation, OrderDto orderDto,
-                         ReservationDto reservationDto,HttpSession httpSession) throws Exception {
-
+    ResponseEntity deleteById(@PathVariable("reservationId")Long reservationId,ReservationDto reservationDtos,
+                              Principal principal, HttpSession httpSession,ItemFormDto itemFormDto, OrderDto orderDto,ItemSearchDto itemSearchDto,
+                              ReservationStatus reservationStatus) throws Exception {
         /*Long memberId = reservationService.deleteByMemberId(principal,httpSession);
         if (memberId == null){
             return new ResponseEntity<String>("삭제할 예약목록을 선택해주세요",HttpStatus.FORBIDDEN);
@@ -98,14 +110,35 @@ private final HttpSession httpSession;
         }*/
         // 로그인 정보 -> Spring Security
         // principal.getName() (현재 로그인된 정보)
-        Long memberId;
+        String reservationCancel;
+        Long reservationIds;
+        Reservation reservation1;
+        Reservation reservation;
+        Reservation reservation2;
+        Reservation reservation3;
+        List<Reservation> reservationList =reservationService.getmemberIdList(principal,httpSession);
         try {
-            memberId=reservationService.deleteByMemberId(reservationId);
+
+        //reservation1= reservationService.getReservationId(reservationId);
+           // reservation1=reservationService.getReservationId(reservationId);
+            //reservation1=  reservationService.cancelReservation(reservationId);
+
+            //reservation1= reservationService.cancelReservation(reservationId);
+           reservation2=  reservationService.cancelValue(reservationId);
+          for (Reservation reservation4: reservationList){
+            if (reservation4.getReservationStatus().equals("예약완료")){
+                reservationService.cancelValue(reservation4.getId());
+            }
+          }
+
+            //reservation= reservationService.reservationOk(reservation2.getId(),reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+            //reservationIds=reservationService.deleteByMemberId(reservationId);
+             //reservationCancel = reservation.cancelReservation(reservation1);
              //reservationId = reservationService.reservationDelete(reservation);
         }catch (Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<Long>(memberId, HttpStatus.OK);
+        return new ResponseEntity<List<Reservation>>(reservationList, HttpStatus.OK);
     }
 
 }

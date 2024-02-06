@@ -36,8 +36,6 @@ private final KakaoPayService kakaoPayService;
     @GetMapping("/pay/{itemId}")
     public @ResponseBody ReadyResponse payReady( ItemSearchDto itemSearchDto, Model model, @PathVariable("itemId")Long itemId
                                                  ,HttpSession httpSession) {
-        //log.info("주문정보:"+order);
-        //log.info("주문가격:"+totalAmount);
         // 카카오 결제 준비하기	- 결제요청 service 실행.
         model.addAttribute("itemSearchDto",itemSearchDto);
         ReadyResponse readyResponse = kakaoPayService.payReady(itemId);
@@ -48,17 +46,14 @@ private final KakaoPayService kakaoPayService;
        // log.info("결재고유 번호: " + readyResponse.getTid());
         // Order정보를 모델에 저장
        // model.addAttribute("order",order);
-        System.out.println(itemSearchDto.getSearchCheckIn() + " 쳌인 카카오");
-        System.out.println(itemSearchDto.getSearchCheckOut() + " 쳌아웃 카카오");
-        System.out.println(itemSearchDto.getSearchBreakfast() + " 아침 카카오");
-        System.out.println(itemSearchDto.getSearchAdultCount() + " 어른  카카오");
-        System.out.println(itemSearchDto.getSearchChildrenCount() + " 아이  카카오");
+        String type = String.valueOf(itemSearchDto.getSearchRoomType());
         httpSession.setAttribute("checkIn",itemSearchDto.getSearchCheckIn());
         httpSession.setAttribute("checkOut",itemSearchDto.getSearchCheckOut());
         httpSession.setAttribute("adultCount",itemSearchDto.getSearchAdultCount());
         httpSession.setAttribute("childCount",itemSearchDto.getSearchChildrenCount());
         httpSession.setAttribute("breakfast",itemSearchDto.getSearchBreakfast());
         httpSession.setAttribute("price",itemSearchDto.getSearchPrice());
+        httpSession.setAttribute("type",type);
         return readyResponse; // 클라이언트에 보냄.(tid,next_redirect_pc_url이 담겨있음.)
     }
 
@@ -67,14 +62,8 @@ private final KakaoPayService kakaoPayService;
     public String  approveResponse( @PathVariable("itemId")Long itemId, ItemSearchDto itemSearchDto,
                                    Principal principal, HttpSession httpSession, ItemFormDto itemFormDto, OrderDto orderDto, ReservationDto reservationDtos,Model model) throws Exception {
         String email=memberService.loadMemberEmail(principal,httpSession);
-        Reservation reservation =reservationService.reservationOk(reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
-        System.out.println(reservation);
-
-        System.out.println(httpSession.getAttribute("checkIn") + " 쳌인2 카카오");
-        System.out.println(httpSession.getAttribute("checkOut") + " 쳌아웃2 카카오");
-        System.out.println(itemSearchDto.getSearchBreakfast() + " 아침2 카카오");
-        System.out.println(itemSearchDto.getSearchAdultCount() + " 어른2  카카오");
-        System.out.println(itemSearchDto.getSearchChildrenCount() + " 아이2  카카오");
+        //Reservation reservation =reservationService.reservationOk(itemId,reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+        //System.out.println(reservation);
         System.out.println("결제 완료");
         return "redirect:/";
     }

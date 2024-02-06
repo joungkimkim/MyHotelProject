@@ -49,20 +49,18 @@ public class KakaoPayService {
         parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
         parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
         parameters.add("searchPrice", String.valueOf(itemSearchDto.getSearchPrice()));
+        parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));
         parameters.add("total_amount", "3000");
         parameters.add("tax_free_amount", "0");
         parameters.add("approval_url", "http://localhost/kakao/pay/completed/"+ itemId); // 결제승인시 넘어갈 url
         parameters.add("cancel_url", "http://localhost/kakao/pay/cancel"); // 결제취소시 넘어갈 url
         parameters.add("fail_url", "http://localhost/kakao/pay/fail"); // 결제 실패시 넘어갈 url
-      //  parameters.add("order_id", String.valueOf(id));
-        //log.info("파트너주문아이디:"+ parameters.get("partner_order_id")) ;
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
         // 외부url요청 통로 열기.
         RestTemplate template = new RestTemplate();
         String url = "https://kapi.kakao.com/v1/payment/ready";
         // template으로 값을 보내고 받아온 ReadyResponse값 readyResponse에 저장.
         ReadyResponse readyResponse = template.postForObject(url, requestEntity, ReadyResponse.class);
-        //log.info("결재준비 응답객체: " + readyResponse);
         // 받아온 값 return
         return readyResponse;
     }
@@ -71,13 +69,6 @@ public class KakaoPayService {
     public ApproveResponse payApprove(@PathVariable("itemId")Long itemId,
                                       String tid, String pgToken,OrderDto orderDto ,Principal principal ,
                                       HttpSession httpSession, ItemSearchDto itemSearchDto) {
-        String email = memberService.loadMemberEmail(principal,httpSession);
-        Long orderId;
-        //orderId = orderService.order(orderDto,email,httpSession);
-        //System.out.println(orderId + " 승인서비스 오더아이디");
-        //Long orderId = orderService.order(orderDto,email);
-        //System.out.println(orderId + " 승인 오더아이디");
-        // request값 담기.
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
         parameters.add("cid", "TC0ONETIME");
         parameters.add("tid", tid);
@@ -90,11 +81,11 @@ public class KakaoPayService {
         parameters.add("searchBreakfast", String.valueOf(itemSearchDto.getSearchBreakfast()));
         parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
         parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
+        parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));
         parameters.add("searchPrice", String.valueOf(itemSearchDto.getSearchPrice()));
        // parameters.add("order_id", String.valueOf(id));
         // 하나의 map안에 header와 parameter값을 담아줌.
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
-
         // 외부url 통신
         RestTemplate template = new RestTemplate();
         String url = "https://kapi.kakao.com/v1/payment/approve";

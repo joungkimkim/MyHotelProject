@@ -78,8 +78,8 @@ public class MemberController {
     }
 
     @GetMapping(value = "/login")
-    public String loginMember(ReservationDto reservationDto){
-        System.out.println(reservationDto.getPrice() + " 로그인");
+    public String loginMember(){
+
         return "/member/memberLoginForm";
     }
 

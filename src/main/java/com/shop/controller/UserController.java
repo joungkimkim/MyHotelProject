@@ -1,6 +1,7 @@
 package com.shop.controller;
 
 import com.shop.constant.Dessert;
+import com.shop.constant.ReservationStatus;
 import com.shop.constant.RoomType;
 import com.shop.dto.*;
 import com.shop.entity.Item;
@@ -68,7 +69,6 @@ public class UserController {
 
         Page<Item> itemss = itemService.getAdminItemPage(itemSearchDto, pageable);
         model.addAttribute("name",name);
-        model.addAttribute("itemSearchDto",new ItemSearchDto());
         model.addAttribute("items", items);
         httpSession.setAttribute("checkIn",itemSearchDto.getSearchCheckIn());
         // model.addAttribute("itemss", itemss);
@@ -115,7 +115,7 @@ public class UserController {
     ResponseEntity order(@RequestBody ItemSearchDto itemSearchDto,
                          BindingResult bindingResult,
                          Principal principal, ItemFormDto itemFormDto, Item item,Reservation reservation,OrderDto orderDto,
-                         ReservationDto reservationDto) throws Exception {
+                         ReservationDto reservationDto,Long id) throws Exception {
         // String a = "abc" + "def"
         // StringBuilder a;
         // a.append("abc");
@@ -134,13 +134,15 @@ public class UserController {
         LocalDateTime date1 = itemSearchDto.getSearchCheckOut().atStartOfDay();
         LocalDateTime date2 = itemSearchDto.getSearchCheckIn().atStartOfDay();
         int betweenDays = (int) Duration.between(date2, date1).toDays();
-        Long orderId;
+        Long itemId;
         try {
             System.out.println(itemSearchDto.getSearchBreakfast() + "조식인원");
             System.out.println(itemSearchDto.getSearchPrice() + "가격");
             System.out.println(betweenDays + " 날짜 차이");
+
             System.out.println((itemSearchDto.getSearchPrice()* betweenDays) + (itemSearchDto.getSearchBreakfast() * 20000) + "총 합계");
-             reservation = reservationService.reservationOk(reservationDto,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+             reservation = reservationService.reservationOk(id,reservationDto,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+             itemSearchDto.setReservationStatus(ReservationStatus.OK);
             System.out.println(reservation);
             System.out.println("예약완료");
            System.out.println(betweenDays + " 일수차이");

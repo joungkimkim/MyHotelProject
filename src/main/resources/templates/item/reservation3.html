@@ -6,184 +6,182 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
-
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function(){
-         document.getElementById("searchBreakfast").value=0;
-         document.getElementById("searchCount").value=0;
-        });
-                    function fnCalCount(type, ths){
+       document.getElementById("searchBreakfast").value=0;
+       document.getElementById("searchCount").value=0;
+      });
+                  function fnCalCount(type, ths){
 
-                    var $input = $(ths).parents("td").find("input[name='breakfast']");
-                    var searchPrice = $("#searchPrice").val();
-                    var breakfast = 20000;
-                    var tCount = Number($input.val());
-                    var tEqCount = Number($(ths).parents("tr").find("td.bseq_ea").html());
-                        //document.getElementById("count").value=0;
-                if(type=='p'){
-                    if(tCount < tEqCount){
-                     $input.val(Number(tCount)+1);
-                    document.getElementById("searchPrice").value = Number(searchPrice) + 20000;
-                    }
-                }else{
-                    if(tCount > 0){
-                    $input.val(Number(tCount)-1);
-                    document.getElementById("searchPrice").value = Number(searchPrice) - 20000;
-            }
-                        else{
+                  var $input = $(ths).parents("td").find("input[name='breakfast']");
+                  var searchPrice = $("#searchPrice").val();
+                  var breakfast = 20000;
+                  var tCount = Number($input.val());
+                  var tEqCount = Number($(ths).parents("tr").find("td.bseq_ea").html());
+                      //document.getElementById("count").value=0;
+              if(type=='p'){
+                  if(tCount < tEqCount){
+                   $input.val(Number(tCount)+1);
+                  document.getElementById("searchPrice").value = Number(searchPrice) + 20000;
+                  }
+              }else{
+                  if(tCount > 0){
+                  $input.val(Number(tCount)-1);
+                  document.getElementById("searchPrice").value = Number(searchPrice) - 20000;
+          }
+                      else{
 
 
-                        }
-                    }
-            }
+                      }
+                  }
+          }
 
-                function order(){
-                    var token = $("meta[name='_csrf']").attr("content");
-                    var header = $("meta[name='_csrf_header']").attr("content");
-                    var url = "/user/reservationOk";
-                    var paramData = {
-                        itemId : $("#itemId").val(),
-                        searchCheckOut : $("#searchCheckOut").val(),
-                        searchCheckIn : $("#searchCheckIn").val(),
-                        searchPrice : $("#searchPrice").val(),
-                        searchRoomType : $("#searchRoomType").val(),
-                        searchAdultCount:  $("#searchAdultCount").val(),
-                        searchChildrenCount:  $("#searchChildrenCount").val(),
-                        searchBreakfast: $("#searchBreakfast").val(),
-                        searchCount : $("#searchCount").val(),
-                    }
-
-                    var param = JSON.stringify(paramData);
-
-                    $.ajax({
-                        url : url,
-                        type : "POST",
-                        contentType : "application/json",
-                        data : param,
-                        beforeSend : function(xhr){
-                            /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
-                            xhr.setRequestHeader(header, token);
-                        },
-                        dataType : "json",
-                        cache : false,
-                        success : function(result, status){
-                            alert("주문이 완료 되었습니다.");
-                            location.href='/';
-                        },
-                        error : function(jqXHR, status, error){
-                            if(jqXHR.status == '401'){
-                                alert('로그인 후 이용해주세요.');
-                                location.href='/members/login';
-                            }else{
-                                alert(jqXHR.responseText);
-                            }
-                        }
-                    });
-                 }
-
-                function addCart(){
-                    var token = $("meta[name='_csrf']").attr("content");
-                    var header = $("meta[name='_csrf_header']").attr("content");
-
-                    var url = "/cart";
-
-                    var paramData = {
-                        itemId : $("#itemId").val(),
-                        count : $("#searchCount").val(),
-                        checkOut: $("#checkOut").val(),
-                        checkIn: $("#checkOut").val(),
-                    };
-                    var param = JSON.stringify(paramData);
-
-                    $.ajax({
-                        url : url,
-                        type : "POST",
-                        contentType : "application/json",
-                        data : param,
-                        beforeSend : function(xhr){
-                            /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
-                            xhr.setRequestHeader(header, token);
-                        },
-                        dataType : "json",
-                        cache : false,
-                        success : function(result, status){
-                            alert("상품을 장바구니에 담았습니다.");
-                            location.href='/';
-                        },
-                        error : function(jqXHR, status, error){
-                            if(jqXHR.status == '401'){
-                                alert('로그인 후 이용해주세요.');
-                                location.href='/members/login';
-                            }else{
-                                alert(jqXHR.responseText);
-                            }
-                        }
-                    });
-                 }
-   // 카카오결제
-	$(function(){
-		$("#btn-kakao-pay").click(function(){
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
-			// 필수입력값을 확인.
-			var name = $("#form-payment input[name='pay-name']").val();
-			var tel = $("#form-payment input[name='pay-tel']").val();
-			var email = $("#form-payment input[name='pay-email']").val();
-
-			if(name == ""){
-				$("#form-payment input[name='pay-name']").focus()
-			}
-			if(tel == ""){
-				$("#form-payment input[name='pay-tel']").focus()
-			}
-			if(email == ""){
-				$("#form-payment input[name='pay-email']").focus()
-			}
-
-			// 결제 정보를 form에 저장한다.
-
-                var itemId = $("#itemId").val();
-                var count = $("#count").val();
-                    var paramData = {
-                        itemId : $("#itemId").val(),
-                        searchCheckOut : $("#searchCheckOut").val(),
-                        searchCheckIn : $("#searchCheckIn").val(),
-                        searchPrice : $("#searchPrice").val(),
-                        searchAdultCount:  $("#searchAdultCount").val(),
-                        searchChildrenCount:  $("#searchChildrenCount").val(),
-                        searchBreakfast: $("#searchBreakfast").val(),
-                    }
-
-                    var param = JSON.stringify(paramData);
-
-			// 카카오페이 결제전송
-			$.ajax({
-				type:'get'
-				,url:'/kakao/pay/' + itemId
-				,data:{
-				  searchCheckOut : $("#searchCheckOut").val(),
-                   searchCheckIn : $("#searchCheckIn").val(),
-                    itemId:itemId,
+              function order(){
+                  var token = $("meta[name='_csrf']").attr("content");
+                  var header = $("meta[name='_csrf_header']").attr("content");
+                  var url = "/user/reservationOk";
+                  var paramData = {
+                      itemId : $("#itemId").val(),
+                      searchCheckOut : $("#searchCheckOut").val(),
+                      searchCheckIn : $("#searchCheckIn").val(),
                       searchPrice : $("#searchPrice").val(),
-                        searchAdultCount:  $("#searchAdultCount").val(),
-                        searchChildrenCount:  $("#searchChildrenCount").val(),
-                        searchBreakfast: $("#searchBreakfast").val(),
-				},
-				 beforeSend : function(xhr){
-                            /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
-                            xhr.setRequestHeader(header, token);
-                        },
-				success:function(response){
+                      searchRoomType : $("#searchRoomType").val(),
+                      searchAdultCount:  $("#searchAdultCount").val(),
+                      searchChildrenCount:  $("#searchChildrenCount").val(),
+                      searchBreakfast: $("#searchBreakfast").val(),
+                      searchCount : $("#searchCount").val(),
+                  }
 
-					location.href = response.next_redirect_pc_url
+                  var param = JSON.stringify(paramData);
 
-				}
-			})
-		})
-	})
+                  $.ajax({
+                      url : url,
+                      type : "POST",
+                      contentType : "application/json",
+                      data : param,
+                      beforeSend : function(xhr){
+                          /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
+                          xhr.setRequestHeader(header, token);
+                      },
+                      dataType : "json",
+                      cache : false,
+                      success : function(result, status){
+                          alert("주문이 완료 되었습니다.");
+                         location.reload();
+                      },
+                      error : function(jqXHR, status, error){
+                          if(jqXHR.status == '401'){
+                              alert('로그인 후 이용해주세요.');
+                              location.href='/members/login';
+                          }else{
+                              alert(jqXHR.responseText);
+                          }
+                      }
+                  });
+               }
 
+              function addCart(){
+                  var token = $("meta[name='_csrf']").attr("content");
+                  var header = $("meta[name='_csrf_header']").attr("content");
 
+                  var url = "/cart";
+
+                  var paramData = {
+                      itemId : $("#itemId").val(),
+                      count : $("#searchCount").val(),
+                      checkOut: $("#checkOut").val(),
+                      checkIn: $("#checkOut").val(),
+                  };
+                  var param = JSON.stringify(paramData);
+
+                  $.ajax({
+                      url : url,
+                      type : "POST",
+                      contentType : "application/json",
+                      data : param,
+                      beforeSend : function(xhr){
+                          /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
+                          xhr.setRequestHeader(header, token);
+                      },
+                      dataType : "json",
+                      cache : false,
+                      success : function(result, status){
+                          alert("상품을 장바구니에 담았습니다.");
+                          location.href='/';
+                      },
+                      error : function(jqXHR, status, error){
+                          if(jqXHR.status == '401'){
+                              alert('로그인 후 이용해주세요.');
+                              location.href='/members/login';
+                          }else{
+                              alert(jqXHR.responseText);
+                          }
+                      }
+                  });
+               }
+ // 카카오결제
+  $(function(){
+      $("#btn-kakao-pay").click(function(){
+          var token = $("meta[name='_csrf']").attr("content");
+          var header = $("meta[name='_csrf_header']").attr("content");
+          // 필수입력값을 확인.
+          var name = $("#form-payment input[name='pay-name']").val();
+          var tel = $("#form-payment input[name='pay-tel']").val();
+          var email = $("#form-payment input[name='pay-email']").val();
+
+          if(name == ""){
+              $("#form-payment input[name='pay-name']").focus()
+          }
+          if(tel == ""){
+              $("#form-payment input[name='pay-tel']").focus()
+          }
+          if(email == ""){
+              $("#form-payment input[name='pay-email']").focus()
+          }
+
+          // 결제 정보를 form에 저장한다.
+
+              var itemId = $("#itemId").val();
+              var count = $("#count").val();
+                  var paramData = {
+                      itemId : $("#itemId").val(),
+                      searchCheckOut : $("#searchCheckOut").val(),
+                      searchCheckIn : $("#searchCheckIn").val(),
+                      searchPrice : $("#searchPrice").val(),
+                      searchAdultCount:  $("#searchAdultCount").val(),
+                      searchChildrenCount:  $("#searchChildrenCount").val(),
+                      searchBreakfast: $("#searchBreakfast").val(),
+                      searchRoomType : $("#searchRoomType").val(),
+                  }
+                  var param = JSON.stringify(paramData);
+
+          // 카카오페이 결제전송
+          $.ajax({
+                  type:'get'
+                  ,url:'/kakao/pay/' + itemId
+                  ,data:{
+                        searchCheckOut : $("#searchCheckOut").val(),
+                         searchCheckIn : $("#searchCheckIn").val(),
+                          itemId:itemId,
+                          searchPrice : $("#searchPrice").val(),
+                          searchAdultCount:  $("#searchAdultCount").val(),
+                          searchChildrenCount:  $("#searchChildrenCount").val(),
+                          searchBreakfast: $("#searchBreakfast").val(),
+                          searchRoomType : $("#searchRoomType").val(),
+                  },
+               beforeSend : function(xhr){
+                          /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
+                          xhr.setRequestHeader(header, token);
+                      },
+                      success:function(response){
+                      location.href = response.next_redirect_pc_url
+
+              }
+          })
+      })
+  })
     </script>
 </th:block>
 <!-- 사용자 CSS 추가 -->
@@ -201,22 +199,26 @@
 		    color:#f1ebd5;
 			}
 
+
 		input{
 		    height:20px;
-		    width:70%;
 		    border:none;
 		    text-align:center;
 		    font-size:large;
 		    font-weight:bold;
 			}
+        table{
+            margin-bottom: 20px;
+
+        }
     </style>
 
 </th:block>
 
 <div layout:fragment="content" style="margin-left:25%;margin-right:25%">
     <input type="hidden" id="itemId" th:value="${item.Id}">
-    &nbsp;&nbsp;&nbsp; <font size="20">객실예약</font><br />
-    <table align="center" class="reservelist1">
+    &nbsp;&nbsp;&nbsp; <h1 size="20">객실예약</h1><br />
+    <table align="center">
         <tr id="list1">
             <td id="step3">날짜,인원 선택</td>
             <td id="step1">객실 및 옵션 선택</td>
@@ -224,13 +226,13 @@
     </table>
 
     <form  method="post" name="regForm" enctype="multipart/form-data">
-            <table width="80%" align="center" class="reserveResult" th:object="${itemSearchDto}">
+        <img th:src="${item.itemImgDtoList[0].imgUrl}" width="300" height="250">
+            <table  align="center" class="reserveResult" th:object="${itemSearchDto}">
             <tr height="15%">
                 <th colspan="4" align="center"><font size="5">예약정보</font></th>
             </tr>
             <tr id="line" >
-                <td align="center" id="line"><img th:src="${item.itemImgDtoList[0].imgUrl}" width="280" height="200"></td>
-
+                <td align="center" id="line"></td>
                         <tr align="left">
                             <td>
                                 예약 객실 : <b>[[${itemSearchDto.searchRoomType}]]</b>
@@ -262,39 +264,32 @@
                             </td>
                             <td>
                                 총 금액 : <input type="text" name="r_price"  readonly="readonly"
-                                              id="searchPrice"  th:value="${itemSearchDto.searchPrice} * ${days}"/>원
+                                id="searchPrice"  th:value="${itemSearchDto.searchPrice} * ${days}"/>원
                                 <input type="hidden"  th:field="*{searchPrice}"/>
                             </td>
                         </tr>
 
 
-
-
- <table>
             <tr>
                 <td colspan="4" align="center" style="font-weight:bold;" height="15%"><font size="5">옵션선택</font></td>
             </tr>
             <tr id="line">
-                <td class="bseq_ea">100</td>
                 <td colspan="4" align="center" id="line">
                     조식 인원 수 (1인당 20,000원) :
-                    <button type ="button" onclick="fnCalCount('p',this);">+</button>
-                    <button type ="button" onclick="fnCalCount('m',this);">-</button>
-                    <input type="text" name="breakfast"  id="searchBreakfast" th:value="${itemSearchDto.searchBreakfast}">&nbsp;&nbsp;
-                    <input type="hidden" style="background-color:#e7eaed; text-align:center;" id="count" th:field="*{searchBreakfast}"/>&nbsp;&nbsp;
-                    <input type="number" style="background-color:#e7eaed; text-align:center;" min="0" name="count" th:field="*{searchCount}" id="searchCount"/> 객실 수
-                    <input type="hidden"  th:value="${itemSearchDto.searchCount}">&nbsp;&nbsp;
+                    <input type="number" name="breakfast"  id="searchBreakfast" th:value="${itemSearchDto.searchBreakfast}">&nbsp;&nbsp;
+                    객실 수<input type="number" style="background-color:#e7eaed; text-align:center;" min="0" name="count" th:field="*{searchCount}" id="searchCount"/>
+                    <input type="hidden" style="background-color:#e7eaed; text-align:center;" id="count" th:field="*{searchBreakfast}"/>&nbsp;
+                    <br>
+                    <input type="hidden"  th:value="${itemSearchDto.searchCount}" />&nbsp;&nbsp;
+                    <input type="button" id="btns" onclick="addCart()"
+                           value="장바구니 담기"   style="height:50px;">
+                    <input type="button" value="카카오페이 결제" id="btn-kakao-pay" />
                     <input type="button" id="btn" value="예약하기"  onclick="order()" />
-                    <button type="button" class="btn btn-outline-success btn-lg" onclick="addCart()"
-                            style="height:50px;">
-                        장바구니 담기
-                        <button type="button" id="btn-kakao-pay">카카오페이로 결제하기</button>
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
 
                 </td>
             </tr>
-
-        </table>
 
             </table>
     </form>

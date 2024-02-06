@@ -36,6 +36,12 @@
             font-size:medium;
             color:#f1ebd5;
             }
+        #d-flex justify-content-center{
+            margin-top: 40px;
+        }
+        input{
+         width: 440px;
+        }
     </style>
 </th:block>
 
@@ -50,10 +56,24 @@
         고객님들의 소중한 충고와 격려, 또는 제안의 말씀을 주시면 더 나은 서비스로 보답하겠습니다.<br/>
     </div>
     <form th:action="@{'/faq/boardLists/'+${boards.number}}" role="form" method="get" th:object="${boards}">
+        <div class="d-flex justify-content-center" th:object="${boardSearchDto}">
+            <select th:field="*{searchDateType}">
+                <option value="all">전체기간</option>
+                <option value="1d">1일</option>
+                <option value="1w">1주</option>
+                <option value="1m">1개월</option>
+                <option value="6m">6개월</option>
+            </select>
+            <select th:field="*{searchBy}">
+                <option value="title">제목</option>
+                <option value="writer">작성자</option>
+            </select>
+            <input th:field="*{searchQuery}" type="text" placeholder="검색어를 입력해주세요">
+            <button id="searchBtn" type="submit">검색</button>
+        </div>
     <table class="inquiryInfo" style="border:1px solid black;margin-left:auto;margin-right:auto;">
         <thead>
         <tr id="list">
-            <td>전체 선택</td>
             <td>no</td>
             <td>작성자</td>
             <td>제목</td>
@@ -62,17 +82,22 @@
         </thead>
         <tbody>
             <tr th:each="board, status : ${boards.getContent()}">
-
                 <td align="center" th:text="${board.id}"></td>
                 <td align="center" th:text="${board.writer}"></td>
                 <td align="center"><a th:href="'/faq/detail/'+${board.id}" th:text="${board.title}"></a></td></b>
-                <td align="center" th:text="${board.writer}"></td>
+                <td align="center" th:text="${board.localDate}"></td>
             </tr>
         </tbody>
         <tr align="right">
             <td colspan="4"><input type="button" id="btn" value="작성"  sec:authorize="isAuthenticated()" onclick="location.href='/faq/write'" /></td>
         </tr>
     </table>
+
+
+
+
+    </form>
+</div>
     <div th:with="start=${(boards.number/maxPage)*maxPage +1},
             end=(${(boards.totalPages == 0) ? 1 : (start + (maxPage-1) < boards.totalPages ?
             start + (maxPage - 1) : boards.totalPages)})">
@@ -86,7 +111,7 @@
             <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
                 th:classappend="${boards.number eq page-1}?'active':'defaultText'">
                 <a th:href="@{/faq/boardLists(page=${page})}"
-                   th:inline="text" class="page-link">[[${page}]]</a>
+                   th:inline="text" class="btn btn-secondary">[[${page}]]</a>
             </li>
             <li class="page-item" th:classappend="${boards.number+1 ge boards.totalPages}?'disabled' : 'defaultText'">
                 <a th:href="${boards.last} ? '#' : @{/faq/boardLists(page=${boards.number + 2})}"
@@ -96,21 +121,4 @@
             </li>
         </ul>
     </div>
-    <div class="d-flex justify-content-center" th:object="${boardSearchDto}">
-        <select th:field="*{searchDateType}" class="form-control me-2 p-2 selectSize">
-            <option value="all">전체기간</option>
-            <option value="1d">1일</option>
-            <option value="1w">1주</option>
-            <option value="1m">1개월</option>
-            <option value="6m">6개월</option>
-        </select>
-        <select th:field="*{searchBy}" class="form-control me-2 p-2 selectSize">
-            <option value="title">제목</option>
-            <option value="writer">작성자</option>
-        </select>
-        <input th:field="*{searchQuery}" type="text" class="form-control me-3 p-2 inputSize" placeholder="검색어를 입력해주세요">
-        <button id="searchBtn" type="submit" class="form-control btn btn-success p-2 findButton">검색</button>
-    </div>
-    </form>
-</div>
 </div>

@@ -249,15 +249,15 @@
             height: 400px;
             resize: none;
             line-height: 20px;
-            background-color : #f0f0f0;
+            background-color : beige;
         }
         .rounded-3 {
-            background-color : #D8D8D8;
+            background-color : beige;
             height:55px;
         }
     </style>
 </th:block>
-<div layout:fragment="content">
+<div layout:fragment="content" style="margin-top:40px;">
     <div class="container col-5 mb-5">
         <div class="py-3 text-center">
             <h2 th:text="${writeFormDto.title}"></h2>
@@ -276,9 +276,10 @@
         <div class="form-floating mb-3">
             <textarea readonly class="form-control-plaintext" id="content" th:text="${writeFormDto.content}"></textarea>
         </div>
+        <input type="button" class="btn btn-light" onclick="location.href='/faq/boardLists'" value="목록">
         <hr class="my-4">
         <div>
-            <input type="button" class="btn btn-secondary" onclick="location.href='/faq/boardLists'" value="목록">
+
             <a class="btn btn-secondary" th:href="'/faq/boardDetail/'+${writeFormDto.id}"
                sec:authorize="hasAnyAuthority('ROLE_ADMIN')">수정</a>
         </div>

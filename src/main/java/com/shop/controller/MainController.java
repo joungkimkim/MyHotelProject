@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Optional;
 @Controller
 @RequiredArgsConstructor
+
 public class MainController {
     private final ItemService itemService;
     private final MemberService memberService;
@@ -50,7 +51,6 @@ public class MainController {
         model.addAttribute("maxPage",5);
         return "main";
     }
-
 
 
 

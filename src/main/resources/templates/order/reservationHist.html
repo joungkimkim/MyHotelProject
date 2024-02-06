@@ -35,6 +35,7 @@
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
                 var id = $("#reservationId").val();
+                var cancel = $("#cancel").val();
                 var url = "/room/deleteById/" + id;
 
                 var dataList = new Array();
@@ -42,8 +43,10 @@
                     reservationId
                 $("input[name=reservationChkBox]:checked").each(function(){
                     var reservationId = $(this).val();
+
                     var data = new Object();
                     data["reservationId"] = reservationId;
+
                     dataList.push(data);
                 });
 
@@ -52,7 +55,7 @@
 
                 $.ajax({
                     url : url,
-                    type : "delete",
+                    type : "post",
                     contentType : "application/json",
                     data : param,
                     beforeSend : function(xhr){
@@ -112,6 +115,7 @@
 
 
     <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="cancel" id="cancel" th:value="${cancel}">
         <table align="center" class="reserveInfo">
             <tr align="center" id="list" >
                 <td>선택</td>
@@ -128,7 +132,7 @@
                 <tr th:each="lists : ${List}">
                     <td class="text-center align-middle">
                         <input type="checkbox" name="reservationChkBox" id="reservationId" th:value="${lists.id}">
-                    </td>id
+                    </td>
                     <td th:text="${lists.id}"></td>
                     <td th:text="${lists.adultCount}"></td>
                     <td th:text="${lists.childrenCount}"></td>

@@ -1,10 +1,12 @@
 package com.shop.service;
 
+import com.shop.constant.ReservationStatus;
 import com.shop.dto.*;
 import com.shop.entity.*;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
 import com.shop.repository.ReservationRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +56,7 @@ public class ReservationService {
 
 
 
-    public Reservation getReservationId(@Param("id")Long id) {
+    public Reservation getReservationId(@Param("reservationId")Long id) {
 
         return this.reservationRepository.findByReservationId(id);
 
@@ -62,7 +64,7 @@ public class ReservationService {
     public void deletByeAll() {
         reservationRepository.deleteAll();
     }
-    public Reservation reservationOk(ReservationDto reservationDtos,
+    public Reservation reservationOk(@PathVariable("itemId")Long itemId, ReservationDto reservationDtos,
                                      Principal principal, HttpSession httpSession,ItemFormDto itemFormDto, OrderDto orderDto,ItemSearchDto itemSearchDto) throws Exception {
         String email = memberService.loadMemberEmail(principal,httpSession);
         Member member1= memberRepository.findByEmail(email);
@@ -71,9 +73,10 @@ public class ReservationService {
                 .orElseThrow(EntityNotFoundException::new);
         Member member2 =memberRepository.findByMemberId(member1.getId());
 
-        Reservation reservation = Reservation.reservationRoom(reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
+        Reservation reservation = Reservation.reservationRoom(itemId,reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
         if (reservation == null){
-            reservation= Reservation.reservationRoom(reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
+            reservation= Reservation.reservationRoom(itemId,reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
+
             reservationRepository.save(reservation);
         }
 
@@ -82,23 +85,37 @@ public class ReservationService {
 
     }
 
+
+    public void updateStatus(@Param("reservationId")Long reservationId,ReservationStatus reservationStatus){
+        Reservation reservation =new Reservation();
+
+        String cancel=ReservationStatus.CANCEL.getStringValue();
+        reservation.cancel(reservationId,cancel,reservationStatus);
+
+    }
     public Long deleteByMemberId(@Param("reservationId")Long reservationId) {
         reservationRepository.deleteByReservationId(reservationId);
+
      return reservationId;
     }
 
-    public Reservation findReservation(Long reservationId) {
-        return reservationRepository.findById(reservationId)
-                .orElseThrow(EntityNotFoundException::new);
+    @Transactional(readOnly = true)
+    public Page<Reservation> getAdminReservationPage(ReservationSearchDto reservationSearchDto, Pageable pageable){
+        return reservationRepository.getAdminReservationPage(reservationSearchDto,pageable);
     }
 
-    public Long reservationDelete(Reservation reservation) {
-        Long reservationId = reservation.getId();
-        reservationRepository.delete(reservation);
-        return reservationId;
+    @Transactional
+    public Reservation cancelReservation(@Param("reservationId")Long reservationId){
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
+reservationRepository.save(reservation);
+        return reservation;
     }
-
-
+    @Transactional
+    public Reservation cancelValue(@Param("reservationId")Long reservationId){
+        Reservation reservation= new Reservation();
+        reservation.updateStatus(reservationId);
+        return reservation;
+    }
 
 
 }

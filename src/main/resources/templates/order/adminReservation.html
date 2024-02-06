@@ -7,6 +7,32 @@
   <meta name="_csrf" th:content="${_csrf.token}"/>
   <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    $(document).ready(function(){
+        $("searchBtn").on("click",function(e){
+            e.preventDefault(); //검색버튼 클릭시 form 태그 전송을 막습니다.
+            page(0);
+        });
+    });
+
+    function page(page){
+        var searchRoomType = $("#searchRoomType").val();
+        var searchDateType = $("#searchDateType").val();
+        var searchBy = $("#searchBy").val();
+        var searchCheckIn = $("#searchCheckIn").val();
+
+
+       // var searchSellStatus = $("#searchSellStatus").val();
+       var searchBy = $("#searchBy").val();
+        var searchQuery = $("#searchQuery").val();
+
+        location.href="/room/adminReservationHist/" + page + "?searchDateType=" + searchDateType
+        + "&searchBy=" + searchBy  + "&searchRoomType=" + searchRoomType + "&searchCheckIn=" + searchCheckIn
+        + "&searchQuery=" + searchQuery;
+    }
+  </script>
+</th:block>
 <!-- 사용자 CSS 추가 -->
 <th:block layout:fragment="css">
 
@@ -29,20 +55,51 @@
         font-size: xx-large;
 
     }
+    #content{
+      margin-top: 80px;
+
+    }
+    #form{
+      margin-bottom: 30px;
+
+    }
 
   </style>
 </th:block>
 
 
 <div layout:fragment="content">
-
-
   <br/><br />
-  <h1 size="20">예약 내역<br /></h1>
+  <h1 size="20">고객 예약 내역<br /></h1>
+  <form th:action="@{'/room/adminReservationHist/'+${reservations.number}}" id="form" role="form" method="get" th:object="${reservations}">
 
 
+    <table align="center" class="reserveInfo">
 
-  <table align="center" class="reserveInfo">
+      <div class="d-flex justify-content-center" id="content" th:object="${reservationSearchDto}">
+        <select th:field="*{searchDateType}"  style="width:auto;">
+          <option value="all">전체기간</option>
+          <option value="1d">1일</option>
+          <option value="1w">1주</option>
+          <option value="1m">1개월</option>
+          <option value="6m">6개월</option>
+        </select>
+        <select th:field="*{searchBy}" style="width:auto;">
+          <option value="name">예약자 성함</option>
+          <option value="email">예약자 이메일</option>
+        </select>
+        <select th:field="*{searchRoomType}" style="width:auto;">
+          <option value="">방 종류</option>
+          <option value="DELUXE">디럭스</option>
+          <option value="ROYAL">로얄</option>
+          <option value="STANDARD">스탠다드</option>
+          <option value="SWEET">스위트</option>
+        </select>
+        <input type="date" th:field="*{searchCheckIn}"  style="width:200px;" />
+        <input type="date" th:field="*{searchCheckOut}" style="width:200px;" value="체크인 날짜" />
+        <input th:field="*{searchQuery}" type="text"  style="width:auto; margin-right: 15px;" placeholder="검색어를 입력해주세요">
+        <button id="searchBtn" type="submit"  style="width:auto">검색</button>
+      </div>
     <tr align="center" id="list" >
       <td>no</td>
       <td>ID</td>
@@ -56,22 +113,48 @@
       <td>조식인원</td>
       <td>예약시간</td>
     </tr>
-    <tr th:each="lists : ${List}">
-      <td th:text="${lists.id}"></td>
-      <td th:text="${lists.email}"></td>
-      <td th:text="${lists.name}"></td>
-      <td th:text="${lists.adultCount}"></td>
-      <td th:text="${lists.childrenCount}"></td>
-      <td th:text="${lists.checkIn}"></td>
-      <td th:text="${lists.checkOut}"></td>
-      <td th:text="${lists.type}"></td>
-      <td th:text="${lists.price}"></td>
-      <td th:text="${lists.breakfast}"></td>
-      <td th:text="${lists.reservationTime}"></td>
+    <tr th:each="reservation : ${reservations}">
+      <td th:text="${reservation.id}"></td>
+      <td th:text="${reservation.email}"></td>
+      <td th:text="${reservation.name}"></td>
+      <td th:text="${reservation.adultCount}"></td>
+      <td th:text="${reservation.childrenCount}"></td>
+      <td th:text="${reservation.checkIn}"></td>
+      <td th:text="${reservation.checkOut}"></td>
+      <td th:text="${reservation.type}"></td>
+      <td th:text="${reservation.price}"></td>
+      <td th:text="${reservation.breakfast}"></td>
+      <td th:text="${reservation.reservationTime}"></td>
 
-    </tr>
+
 
   </table>
 
+
+    <div th:with="start=${(reservations.number/maxPage)*maxPage +1},
+        end=(${(reservations.totalPages == 0) ?
+        1 : (start + (maxPage-1) < reservations.totalPages ? start + (maxPage - 1) : reservations.totalPages)})">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${reservations.first}?'disabled'">
+          <a th:onclick="'javascript:page('+${reservations.number - 1} + ')'" aria-label='Previous'
+             class="btn btn-secondary">
+            <span aria-hidden="true">Previous</span>
+          </a>
+        </li>
+        <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
+            th:classappend="${reservations.number eq page-1}?'active':''">
+          <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
+             class="page-link">[[${page}]]</a>
+        </li>
+        <li class="page-item" th:classappend="${reservations.last}?'disabled'">
+          <a th:onclick="'javascript:page(' + ${reservations.number + 1} + ')'" aria-label="Next"
+             class="page-link">
+            <span aria-hidden="true">Next</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </form>
 
 </div>

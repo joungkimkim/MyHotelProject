@@ -1,32 +1,23 @@
 package com.shop.service;
 
 import com.shop.dto.MemberASDto;
-import com.shop.dto.MemberFormDto;
-import com.shop.entity.Admin;
 import com.shop.entity.Member;
-import com.shop.repository.AdminRepository;
 import com.shop.repository.MemberRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 @Service // 나 서비스다.
 @Transactional // 트랜젝션설정 : 성공을하면 그대로 적용 실패하면 롤백
 @RequiredArgsConstructor // final 또는 @NonNull 명령어가 붙으면 객체를 자동 붙혀줍니다.
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
-    private final AdminRepository adminRepository;
 
     public Member saveMember(Member member) {
         validateDuplicateMember(member);
@@ -53,7 +44,6 @@ public class MemberService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(email);
-        Admin admin = adminRepository.findByEmail(email);
         if (member == null) {
             throw new UsernameNotFoundException(email);
 
