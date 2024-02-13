@@ -3,7 +3,6 @@ package com.shop.repository;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shop.constant.Dessert;
 import com.shop.constant.ItemSellStatus;
 import com.shop.constant.RoomType;
 import com.shop.dto.ItemSearchDto;

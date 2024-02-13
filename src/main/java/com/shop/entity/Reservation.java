@@ -10,6 +10,7 @@ import com.shop.exception.OutOfStockException;
 import com.shop.service.MemberService;
 import jakarta.persistence.*;
 import jakarta.servlet.http.HttpSession;
+import javassist.runtime.Desc;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @Column(name = "reservation_id")
+    @OrderBy(value = "reservation_id DESC")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -56,6 +58,7 @@ public class Reservation {
 
     private String reservationStatus;
     @Column(name = "reservationTime")
+
     private LocalDate reservationTime;
 
     @ManyToOne
@@ -84,14 +87,12 @@ public class Reservation {
             int adultCount =(int) httpSession.getAttribute("adultCount");
            int childCount = (int) httpSession.getAttribute("childCount");
            int breakfast = (int) httpSession.getAttribute("breakfast");
-           String roomNm = (String) httpSession.getAttribute("roomNm");
+           int counts = (int) httpSession.getAttribute("count");
+             int totalPrice = (int) httpSession.getAttribute("totalPrice");
             String type =(String) httpSession.getAttribute("type");
             Integer price = (Integer) httpSession.getAttribute("price");
-            LocalDateTime SessionCheckIn = sessionCheckIn.atStartOfDay();
-            LocalDateTime SessionCheckOut = sessionCheckOut.atStartOfDay();
-            int sessionBetweenDays = (int) Duration.between(SessionCheckIn, SessionCheckOut).toDays();
             reservation.setMember(member);
-            reservation.setPrice(price);
+            reservation.setPrice(totalPrice);
             reservation.setEmail(email);
             reservation.setName(name);
             reservation.setCheckIn(sessionCheckIn);
@@ -102,14 +103,10 @@ public class Reservation {
             reservation.setReservationTime(LocalDate.now());
             reservation.setType(type);
             reservation.setReservationStatus(ReservationStatus.OK.getStringValue());
-            item.removeStock();
+            item.removeStock(counts);
         }
         // 일반 예약
         else {
-            LocalDateTime checkIn = itemSearchDto.getSearchCheckIn().atStartOfDay();
-            LocalDateTime checkOut = itemSearchDto.getSearchCheckOut().atStartOfDay();
-            int breakfast = itemSearchDto.getSearchBreakfast() * 20000;
-            int sessionBetweenDays = (int) Duration.between(checkIn, checkOut).toDays();
             reservation.setMember(member);
             reservation.setType(String.valueOf(itemSearchDto.getSearchRoomType()));
             reservation.setEmail(email);
@@ -124,7 +121,7 @@ public class Reservation {
             reservation.setItem(item);
             reservation.setPrice((itemSearchDto.getSearchPrice()));
             reservation.setReservationStatus(ReservationStatus.OK.getStringValue());
-            item.removeStock();
+            item.removeStock(itemSearchDto.getSearchCount());
         }
         return reservation;
     }

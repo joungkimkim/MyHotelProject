@@ -11,7 +11,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">장바구니</a>
+                            <a class="dropdown-item" href="/cart" sec:authorize="hasAnyAuthority('ROLE_USER')">장바구니</a>
                             <a class="dropdown-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" href="/admin/item/new">객실 등록</a>
                             <a class="dropdown-item" href="/profile/myInfoAS" sec:authorize="hasAnyAuthority('ROLE_USER')">정보 수정</a>
                             <a class="dropdown-item" href="/members/logout" sec:authorize="isAuthenticated()">로그아웃</a>
@@ -33,15 +33,15 @@
                 </div>
             </th>
 
-            <th><a href="/room/adminReservationHist" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">예약 조회</a>
+            <th><a href="/room/adminReservationHist" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">고객 예약 조회</a>
                 <a href="/user/reservations" sec:authorize="hasAnyAuthority('ROLE_USER')">예약하기</a>
             </th>
             <th><a href="/"><img src="https://raw.githubusercontent.com/raccoon-ccoder/Hotel_Overton/master/data/logo.png"
                                  width="175" height="140" alt="HOME"></a></th>
             <th><a href="/faq/boardLists">고객의 소리</a></th>
             <th><a href="/map">오시는 길</a></th>
-            <th><a href="/room/reservationHist" sec:authorize="hasAnyAuthority('ROLE_USER')">고객 예약내역</a>
-                <a class="dropdown-item" href="/admin/items" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">객실 관리</a>
+            <th><a href="/room/reservationHist" sec:authorize="hasAnyAuthority('ROLE_USER')">내 예약내역</a>
+                <a  href="/admin/items" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">객실 관리</a>
             </th>
         </tr>
     </table>

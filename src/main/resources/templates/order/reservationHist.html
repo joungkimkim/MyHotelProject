@@ -34,20 +34,21 @@
          function deleteById(){
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
-                var id = $("#reservationId").val();
-                var cancel = $("#cancel").val();
-                var url = "/room/deleteById/" + id;
+                var reservationId = $("#reservationId").val();
+                var url = "/room/deleteById/" + reservationId;
+
 
                 var dataList = new Array();
                 var paramData = new Object();
-                    reservationId
-                $("input[name=reservationChkBox]:checked").each(function(){
-                    var reservationId = $(this).val();
 
-                    var data = new Object();
+                $("input[name=reservationChkBox]:checked").each(function(){
+
+
+                  var data = new Object();
                     data["reservationId"] = reservationId;
 
                     dataList.push(data);
+
                 });
 
                 paramData['reservationList'] = dataList;
@@ -102,24 +103,20 @@
 			font-size: xx-large;
 
 		}
-
     </style>
 </th:block>
 
 
 <div layout:fragment="content">
-
-
     <br/><br />
     <h1 size="20">예약 내역<br /></h1>
 
 
-    <form method="post" enctype="multipart/form-data">
-        <input type="hidden" name="cancel" id="cancel" th:value="${cancel}">
+    <form method="post" enctype="multipart/form-data" th:object="${List}">
         <table align="center" class="reserveInfo">
             <tr align="center" id="list" >
-                <td>선택</td>
                 <td>no</td>
+                <td>선택</td>
                 <td>성인 투숙객 수(명)</td>
                 <td>어린이 투숙객 수(명)</td>
                 <td>체크인</td>
@@ -130,10 +127,10 @@
                 <td>예약시간</td>
             </tr>
                 <tr th:each="lists : ${List}">
-                    <td class="text-center align-middle">
-                        <input type="checkbox" name="reservationChkBox" id="reservationId" th:value="${lists.id}">
+                    <td class="text-center align-middle"
+                        th:text="${lists.id}">
                     </td>
-                    <td th:text="${lists.id}"></td>
+                    <td><input type="checkbox" name="reservationChkBox" id="reservationId" th:value="${lists.id}"></td>
                     <td th:text="${lists.adultCount}"></td>
                     <td th:text="${lists.childrenCount}"></td>
                     <td th:text="${lists.checkIn}"></td>
@@ -142,13 +139,17 @@
                     <td th:text="${lists.price}"></td>
                     <td th:text="${lists.breakfast}"></td>
                     <td th:text="${lists.reservationTime}"></td>
+
         </tr>
+
             <tr align="center">
                 <td colspan="8">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <input type="button" id="btn" value="예약 취소" onclick="deleteById()" />
                     <input type="submit" id="btn" value="전체 취소" th:formaction="@{'/room/deleteAll'}" />
                 </td>
+
+        </tr>
             </tr>
         </table>
     </form>

@@ -111,7 +111,7 @@
             <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
                 th:classappend="${boards.number eq page-1}?'active':'defaultText'">
                 <a th:href="@{/faq/boardLists(page=${page})}"
-                   th:inline="text" class="btn btn-secondary">[[${page}]]</a>
+                   th:inline="text" class="page-link">[[${page}]]</a>
             </li>
             <li class="page-item" th:classappend="${boards.number+1 ge boards.totalPages}?'disabled' : 'defaultText'">
                 <a th:href="${boards.last} ? '#' : @{/faq/boardLists(page=${boards.number + 2})}"

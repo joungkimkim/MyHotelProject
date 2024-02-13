@@ -1,6 +1,5 @@
 package com.shop.dto;
 
-import com.shop.constant.Dessert;
 import com.shop.constant.ItemSellStatus;
 import com.shop.constant.RoomType;
 import com.shop.entity.Item;
@@ -8,7 +7,6 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -93,7 +94,7 @@ public class ReservationService {
         reservation.cancel(reservationId,cancel,reservationStatus);
 
     }
-    public Long deleteByMemberId(@Param("reservationId")Long reservationId) {
+    public Long deleteByReservationId(@Param("reservationId")Long reservationId) {
         reservationRepository.deleteByReservationId(reservationId);
 
      return reservationId;
@@ -104,18 +105,8 @@ public class ReservationService {
         return reservationRepository.getAdminReservationPage(reservationSearchDto,pageable);
     }
 
-    @Transactional
-    public Reservation cancelReservation(@Param("reservationId")Long reservationId){
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(EntityNotFoundException::new);
-reservationRepository.save(reservation);
-        return reservation;
-    }
-    @Transactional
-    public Reservation cancelValue(@Param("reservationId")Long reservationId){
-        Reservation reservation= new Reservation();
-        reservation.updateStatus(reservationId);
-        return reservation;
-    }
+
+
 
 
 }

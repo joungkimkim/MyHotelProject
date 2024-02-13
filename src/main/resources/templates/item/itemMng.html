@@ -58,13 +58,16 @@
         .page-link{
             color: black;
         }
+           #d-flex justify-content-center{
+            margin-top: 40px;
+        }
     </style>
 </th:block>
 
-<div layout:fragment="content">
+<div layout:fragment="content" style="margin-top: 100px;">
     <form th:action="@{'/admin/items/'+${items.number}}" role="form" method="get" th:object="${items}">
         <table class="table">
-            <div class="row row-cols-lg-auto g-3 align-items-center" th:object="${itemSearchDto}">
+            <div class="d-flex justify-content-center" th:object="${itemSearchDto}">
                 <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
                     <option value="all">전체기간</option>
                     <option value="1d">1일</option>
@@ -82,7 +85,7 @@
                     <option value="createdBy">등록자</option>
                 </select>
                 <input th:field="*{searchQuery}" type="text" class="form-control" style="width:auto; margin-right: 15px;" placeholder="검색어를 입력해주세요">
-                <button id="searchBtn" type="submit" class="form-control btn btn-success" style="width:auto">검색</button>
+                <button id="searchBtn" type="submit" class="form-control btn btn-light" style="width:auto">검색</button>
             </div>
             <thead>
             <tr>
@@ -106,31 +109,32 @@
             </tbody>
         </table>
 
-        <div th:with="start=${(items.number/maxPage)*maxPage +1},
-        end=(${(items.totalPages == 0) ?
-        1 : (start + (maxPage-1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${items.first}?'disabled'">
-                    <a th:onclick="'javascript:page('+${items.number - 1} + ')'" aria-label='Previous'
-                       class="page-link">
-                        <span aria-hidden="true">Previous</span>
-                    </a>
-                </li>
-                <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
-                    th:classappend="${items.number eq page-1}?'active':''">
-                    <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
-                       class="page-link">[[${page}]]</a>
-                </li>
-                <li class="page-item" th:classappend="${items.last}?'disabled'">
-                    <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label="Next"
-                       class="page-link">
-                        <span aria-hidden="true">Next</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+
 
 
     </form>
+    <div th:with="start=${(items.number/maxPage)*maxPage +1},
+        end=(${(items.totalPages == 0) ?
+        1 : (start + (maxPage-1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${items.first}?'disabled'">
+                <a th:onclick="'javascript:page('+${items.number - 1} + ')'" aria-label='Previous'
+                   class="page-link">
+                    <span aria-hidden="true">Previous</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
+                th:classappend="${items.number eq page-1}?'active':''">
+                <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
+                   class="page-link">[[${page}]]</a>
+            </li>
+            <li class="page-item" th:classappend="${items.last}?'disabled'">
+                <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label="Next"
+                   class="page-link">
+                    <span aria-hidden="true">Next</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
 </html>

@@ -14,6 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,13 +50,23 @@ private final KakaoPayService kakaoPayService;
         // Order정보를 모델에 저장
        // model.addAttribute("order",order);
         String type = String.valueOf(itemSearchDto.getSearchRoomType());
+        LocalDateTime date1 = itemSearchDto.getSearchCheckOut().atStartOfDay();
+        LocalDateTime date2 = itemSearchDto.getSearchCheckIn().atStartOfDay();
+        int betweenDays = (int) Duration.between(date2, date1).toDays();
+        int price =itemSearchDto.getSearchPrice();
+        int count = itemSearchDto.getSearchCount();
+        int breakfast = itemSearchDto.getSearchBreakfast();
+        int totalPrice = (price * betweenDays) * count + (breakfast* 20000);
+
         httpSession.setAttribute("checkIn",itemSearchDto.getSearchCheckIn());
         httpSession.setAttribute("checkOut",itemSearchDto.getSearchCheckOut());
+        httpSession.setAttribute("count",itemSearchDto.getSearchCount());
         httpSession.setAttribute("adultCount",itemSearchDto.getSearchAdultCount());
         httpSession.setAttribute("childCount",itemSearchDto.getSearchChildrenCount());
         httpSession.setAttribute("breakfast",itemSearchDto.getSearchBreakfast());
         httpSession.setAttribute("price",itemSearchDto.getSearchPrice());
         httpSession.setAttribute("type",type);
+        httpSession.setAttribute("totalPrice",totalPrice);
         return readyResponse; // 클라이언트에 보냄.(tid,next_redirect_pc_url이 담겨있음.)
     }
 
@@ -62,7 +75,7 @@ private final KakaoPayService kakaoPayService;
     public String  approveResponse( @PathVariable("itemId")Long itemId, ItemSearchDto itemSearchDto,
                                    Principal principal, HttpSession httpSession, ItemFormDto itemFormDto, OrderDto orderDto, ReservationDto reservationDtos,Model model) throws Exception {
         String email=memberService.loadMemberEmail(principal,httpSession);
-        //Reservation reservation =reservationService.reservationOk(itemId,reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+        reservationService.reservationOk(itemId,reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
         //System.out.println(reservation);
         System.out.println("결제 완료");
         return "redirect:/";

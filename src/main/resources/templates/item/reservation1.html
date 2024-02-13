@@ -153,10 +153,11 @@
 
             <table width="100%" align="center" class="reserveResult">
                 <tr align="center" id="line">
-                    <h3>[[${item.type}]]</h3>
+
                         <img th:src="${item.imgUrl}" width="300" height="250">
                    </tr>
                 <tr width="30%" id="line">
+                    <h3>[[${item.type}]]</h3>
                 <h3 th:if="${item.stockNumber}<=0">예약 마감</h3>
                 <h3 th:if="${item.stockNumber}>0">예약 가능</h3>
                      객실크기 : [[${item.size}]]㎡
@@ -210,7 +211,7 @@
                     <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
                         th:classappend="${items.number eq page-1}?'active':''">
                         <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
-                           class="btn btn-secondary">[[${page}]]</a>
+                           class="page-link">[[${page}]]</a>
                     </li>
                     <li class="page-item" th:classappend="${items.last}?'disabled'">
                         <a th:onclick="'javascript:page(' + ${items.number + 1} + ')'" aria-label="Next"

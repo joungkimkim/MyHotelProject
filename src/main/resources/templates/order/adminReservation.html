@@ -126,27 +126,25 @@
       <td th:text="${reservation.breakfast}"></td>
       <td th:text="${reservation.reservationTime}"></td>
 
-
+    </tr>
 
   </table>
 
-
-    <div th:with="start=${(reservations.number/maxPage)*maxPage +1},
-        end=(${(reservations.totalPages == 0) ?
-        1 : (start + (maxPage-1) < reservations.totalPages ? start + (maxPage - 1) : reservations.totalPages)})">
+    <div th:with="start=${(reservations.number/maxPage)*maxPage +1}, end=(${(reservations.totalPages == 0) ?
+                    1 : (start + (maxPage-1) < reservations.totalPages ? start + (maxPage - 1) : reservations.totalPages)})">
       <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${reservations.first}?'disabled'">
+        <li class="page-item" th:classappend="${reservations.first}?'disabled' : 'defaultText'">
           <a th:onclick="'javascript:page('+${reservations.number - 1} + ')'" aria-label='Previous'
-             class="btn btn-secondary">
+             class="page-link">
             <span aria-hidden="true">Previous</span>
           </a>
         </li>
         <li class="page-item" th:each="page: ${#numbers.sequence(start,end)}"
-            th:classappend="${reservations.number eq page-1}?'active':''">
+            th:classappend="${reservations.number eq page-1}?'active':'defaultText'">
           <a th:onclick="'javascript:page('+${page -1} + ')'" th:inline="text"
              class="page-link">[[${page}]]</a>
         </li>
-        <li class="page-item" th:classappend="${reservations.last}?'disabled'">
+        <li class="page-item" th:classappend="${reservations.last}?'disabled' : 'defaultText'">
           <a th:onclick="'javascript:page(' + ${reservations.number + 1} + ')'" aria-label="Next"
              class="page-link">
             <span aria-hidden="true">Next</span>

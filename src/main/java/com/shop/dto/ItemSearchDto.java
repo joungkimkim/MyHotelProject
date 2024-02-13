@@ -1,6 +1,5 @@
 package com.shop.dto;
 
-import com.shop.constant.Dessert;
 import com.shop.constant.ItemSellStatus;
 import com.shop.constant.ReservationStatus;
 import com.shop.constant.RoomType;

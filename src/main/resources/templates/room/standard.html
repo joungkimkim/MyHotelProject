@@ -8,20 +8,24 @@
     <th:block layout:fragment="script">
         <script th:inline="javascript">
             function clickBtn(){
-            const boxs = document.querySelectorAll(".imgss > img");
-                  const img1 =document.getElementById("showimg0").src;
-                  const img2 =document.getElementById("showimg1").src;
-                    boxs.forEach((el, index) => {
-                    el.onclick = () => {
-                    if(index == 0){
-                           document.getElementById("img2").src = img1;
-                    }
-                    else{
-                          document.getElementById("img2").src = img2;
-                    }
-                    }
-                    });
-            }
+              const boxs = document.querySelectorAll(".imgss > img");
+                    const img1 =document.getElementById("showimg0").src;
+                    const img2 =document.getElementById("showimg1").src;
+                    const img3 =document.getElementById("showimg2").src;
+                      boxs.forEach((el, index) => {
+                      el.onclick = () => {
+                      if(index == 0){
+                             document.getElementById("img2").src = img1;
+                      }
+                      else if(index == 1){
+                           document.getElementById("img2").src = img2;
+                      }
+                      else{
+                            document.getElementById("img2").src = img3;
+                      }
+                      }
+                      });
+              }
         </script>
     </th:block>
     <style>
@@ -37,7 +41,7 @@
                .repImgDiv{
                    margin-right:15px;
                    height:500px;
-                   width:50%;
+                    width:120%;
                    margin: auto;
                }
                .repImg{
@@ -122,6 +126,8 @@
         <div class="container">
             <div class="repImgDiv">
                 <div class="imgss">
+                    <img class="rounded repImg" name="targetImg" src="/images/img/standard.jpg"  id="showimg0"
+                         onclick="clickBtn()" >
                     <img class="rounded repImg" name="targetImg" src="/images/img/standard2.jpg"  id="showimg0"
                          onclick="clickBtn()" >
                     <img class="rounded repImg" name="targetImg" src="/images/img/standardbathroom.jpg"  id="showimg1"

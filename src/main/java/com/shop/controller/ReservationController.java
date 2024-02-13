@@ -32,6 +32,8 @@ import org.thymeleaf.util.StringUtils;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,17 +47,21 @@ private final MemberService memberService;
 private final MemberRepository memberRepository;
 private final HttpSession httpSession;
     @GetMapping( value = "/reservationHist")
-    public String reservationHist(Model model, HttpSession httpSession,
-                                  Principal principal,ItemSearchDto itemSearchDto, Optional<Integer> page, ReservationDto reservationDto,Long reservationId,Reservation reservation){
+    public String reservationHist(Long reservationId, Model model, HttpSession httpSession,
+                                  Principal principal,ItemSearchDto itemSearchDto, Optional<Integer> page, ReservationDto reservationDto,Reservation reservation){
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
         Page<MainItemDto> items = itemService.getMainItemPage(itemSearchDto, pageable);
         String name = memberService.loadMemberName(principal,httpSession);
         model.addAttribute("name",name);
         model.addAttribute("List",reservationService.getmemberIdList(principal,httpSession));
         model.addAttribute("reservationId",reservationId);
-        model.addAttribute("items",items);
-        model.addAttribute("cancel",ReservationStatus.CANCEL.getStringValue());
+        model.addAttribute("items",items);;
         model.addAttribute("itemSearchDto",itemSearchDto);
+        List<Reservation> reservations = new ArrayList<>();
+
+
+
+
         return "/order/reservationHist";
     }
     @GetMapping( value = {"/adminReservationHist","/adminReservationHist/{page}"})
@@ -66,7 +72,6 @@ private final HttpSession httpSession;
             reservationSearchDto.setSearchQuery("");
 
         }
-
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
         Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable);
         Page<Reservation> reservations = reservationService.getAdminReservationPage(reservationSearchDto,pageable);
@@ -124,21 +129,16 @@ private final HttpSession httpSession;
             //reservation1=  reservationService.cancelReservation(reservationId);
 
             //reservation1= reservationService.cancelReservation(reservationId);
-           reservation2=  reservationService.cancelValue(reservationId);
-          for (Reservation reservation4: reservationList){
-            if (reservation4.getReservationStatus().equals("예약완료")){
-                reservationService.cancelValue(reservation4.getId());
-            }
-          }
+
 
             //reservation= reservationService.reservationOk(reservation2.getId(),reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
-            //reservationIds=reservationService.deleteByMemberId(reservationId);
+            reservationIds=reservationService.deleteByReservationId(reservationId);
              //reservationCancel = reservation.cancelReservation(reservation1);
              //reservationId = reservationService.reservationDelete(reservation);
         }catch (Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<List<Reservation>>(reservationList, HttpStatus.OK);
+        return new ResponseEntity<Long>(reservationIds, HttpStatus.OK);
     }
 
 }

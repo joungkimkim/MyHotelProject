@@ -1,23 +1,15 @@
 package com.shop.controller;
 
-import com.shop.constant.Dessert;
 import com.shop.constant.ReservationStatus;
-import com.shop.constant.RoomType;
 import com.shop.dto.*;
 import com.shop.entity.Item;
-import com.shop.entity.Member;
 import com.shop.entity.Reservation;
 import com.shop.repository.ItemRepository;
-import com.shop.repository.ReservationRepository;
 import com.shop.service.ItemService;
 import com.shop.service.MemberService;
 import com.shop.service.OrderService;
 import com.shop.service.ReservationService;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,16 +21,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +36,6 @@ public class UserController {
     private final MemberService memberService;
     private final HttpSession httpSession;
     private final ReservationService reservationService;
-    private final ItemRepository itemRepository;
-    private final OrderService orderService;
 
     @GetMapping(value = {"/reservations","/reservations/{page}"})
     public String itemReservation(Model model, Principal principal,  @PathVariable("page")Optional<Integer> page,
@@ -104,9 +88,9 @@ public class UserController {
         model.addAttribute("reservationDto",reservationDto);
         model.addAttribute("item",itemFormDtoss);
         model.addAttribute("ItemFormDto",new ItemFormDto());
+        model.addAttribute("firstPrice",itemSearchDto.getSearchPrice());
         //model.addAttribute("prices",reservationDto.getPrice() * betweenDays);
 
-        System.out.println( httpSession.getAttribute("prices") +" 가격 null?");
         return "/item/reservation3";
     }
 
@@ -116,18 +100,15 @@ public class UserController {
                          BindingResult bindingResult,
                          Principal principal, ItemFormDto itemFormDto, Item item,Reservation reservation,OrderDto orderDto,
                          ReservationDto reservationDto,Long id) throws Exception {
-        // String a = "abc" + "def"
-        // StringBuilder a;
-        // a.append("abc");
-        // a.append("def");
-        /*if(bindingResult.hasErrors()){
+
+        if(bindingResult.hasErrors()){
             StringBuilder sb = new StringBuilder();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             for(FieldError fieldError : fieldErrors){
                 sb.append(fieldError.getDefaultMessage());
             }
             return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
-        }*/
+        }
         // 로그인 정보 -> Spring Security
         // principal.getName() (현재 로그인된 정보)
         String email = memberService.loadMemberEmail(principal,httpSession);

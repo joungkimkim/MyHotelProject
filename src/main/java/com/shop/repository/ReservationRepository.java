@@ -9,6 +9,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation,Long>, QuerydslPredicateExecutor<Reservation>, ReservationCustom {
@@ -22,11 +23,11 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long>, 
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query(value = "delete FROM reservation where reservation_id=?", nativeQuery = true)
-    void deleteByReservationId(@Param("id") Long id);
+    void deleteByReservationId(@Param("reservation_id") Long id);
     @Query(value = "delete * FROM reservation", nativeQuery = true)
     Reservation deletByeAll();
 
-    @Query(value = "SELECT * FROM reservation where member_id=?", nativeQuery = true)
+    @Query(value = "SELECT * FROM  reservation  where member_id=? ORDER BY reservation_id DESC", nativeQuery = true)
     List<Reservation> findByMemberId(@Param("id") Long id);
 
 

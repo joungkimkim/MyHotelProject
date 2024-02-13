@@ -48,6 +48,7 @@ public class KakaoPayService {
         parameters.add("searchBreakfast", String.valueOf(itemSearchDto.getSearchBreakfast()));
         parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
         parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
+        parameters.add("searchCount", String.valueOf(itemSearchDto.getSearchCount()));
         parameters.add("searchPrice", String.valueOf(itemSearchDto.getSearchPrice()));
         parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));
         parameters.add("total_amount", "3000");
@@ -79,6 +80,7 @@ public class KakaoPayService {
         parameters.add("searchCheckIn", String.valueOf(itemSearchDto.getSearchCheckIn()));
         parameters.add("searchCheckOut", String.valueOf(itemSearchDto.getSearchCheckOut()));
         parameters.add("searchBreakfast", String.valueOf(itemSearchDto.getSearchBreakfast()));
+        parameters.add("searchCount", String.valueOf(itemSearchDto.getSearchCount()));
         parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
         parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
         parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));

@@ -1,25 +1,16 @@
 package com.shop.controller;
-
-import com.shop.constant.Dessert;
-import com.shop.constant.RoomType;
 import com.shop.dto.*;
-import com.shop.entity.Comment;
 import com.shop.entity.Item;
-import com.shop.entity.Member;
-import com.shop.entity.Reservation;
 import com.shop.repository.ItemRepository;
-import com.shop.repository.ReservationRepository;
 import com.shop.service.ItemService;
 import com.shop.service.MemberService;
 import com.shop.service.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.security.Principal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +91,7 @@ public class ItemController {
     @PostMapping(value = "/admin/item/{itemId}")
     public String itemUpdate(@Valid ItemFormDto itemFormDto, BindingResult bindingResult,
                              @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList,
-                             Model model, Principal principal){
+                             Model model, Principal principal,ItemSearchDto itemSearchDto){
         String name = memberService.loadMemberName(principal,httpSession);
         model.addAttribute("name",name);
         if(bindingResult.hasErrors()){
@@ -114,7 +102,7 @@ public class ItemController {
             return "item/itemForm";
         }
         try {
-            itemService.updateItem(itemFormDto, itemImgFileList);
+            itemService.updateItem(itemFormDto, itemImgFileList,itemSearchDto);
         }catch (Exception e){
             model.addAttribute("errorMessage", "상품 수정 중 에러가 발생하였습니다.");
             return "item/itemForm";

@@ -1,7 +1,4 @@
 package com.shop.controller;
-
-import com.shop.constant.Dessert;
-import com.shop.constant.RoomType;
 import com.shop.dto.ItemSearchDto;
 import com.shop.dto.MainItemDto;
 import com.shop.service.ItemService;
