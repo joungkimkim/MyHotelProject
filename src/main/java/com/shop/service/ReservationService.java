@@ -48,6 +48,9 @@ public class ReservationService {
         Member member2 =memberRepository.findByMemberId(member1.getId());
         return this.reservationRepository.findByMemberId(member2.getId());
     }
+    public Reservation getReservationId(@Param("reservationId") Long reservationId){
+        return reservationRepository.findByReservationId(reservationId);
+    }
 
 
     public List<Reservation> getAll()
@@ -57,11 +60,7 @@ public class ReservationService {
 
 
 
-    public Reservation getReservationId(@Param("reservationId")Long id) {
 
-        return this.reservationRepository.findByReservationId(id);
-
-    }
     public void deletByeAll() {
         reservationRepository.deleteAll();
     }
@@ -95,9 +94,10 @@ public class ReservationService {
 
     }
     public Long deleteByReservationId(@Param("reservationId")Long reservationId) {
+
         reservationRepository.deleteByReservationId(reservationId);
 
-     return reservationId;
+        return reservationId;
     }
 
     @Transactional(readOnly = true)

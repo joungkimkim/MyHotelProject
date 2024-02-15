@@ -13,6 +13,51 @@
                   $("input[name=reservationChkBox]").change(function(){
 
                   });
+
+        //전체체크 클릭시 모든 체크값 얻기
+	$("#allcheck").click(function(){
+
+			//체크값 얻기
+			var chk=$(this).is(":checked");
+			console.log(chk);
+
+			//전체를 각 글앞의 체크에 일괄 전달
+            //prop()을 통해서는 element가 가지는 실제적인 상태(활성화, 체크, 선택				//여부)를 제어하는 업무에 적절하고
+             // attr()는 속성값이나 정보를 조회하는 업무에 적절하다
+			$(".del").prop("checked",chk);
+		});
+
+
+    //실제 삭제부분
+    $("#btnmemberdel").click(function(){
+
+
+			//체크한 인원수 구하기
+			var cnt=$(".del:checked").length;
+
+			if(cnt==0){
+				alert("먼저 삭제할 회원을 선택해주세요");
+				return;
+			}
+
+            $(".del:checked").each(function(i,elt){
+
+				var reservationId= $("#listId").val();
+				console.log(reservationId);
+
+				$.ajax({
+					type:"post",
+					dataType:"html",
+					url:"/room/deleteById/" + reservationId,
+					data:{"reservationId":reservationId},
+					success:function(){
+						alert("삭제성공");
+						//새로고침
+						location.reload();
+					}
+				});
+			});
+		});
               });
 
               function checkAll(){
@@ -35,17 +80,18 @@
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
                 var reservationId = $("#reservationId").val();
+                var Lists = $("#Lists").val();
+
                 var url = "/room/deleteById/" + reservationId;
+                console.log(reservationId);
 
 
                 var dataList = new Array();
                 var paramData = new Object();
 
                 $("input[name=reservationChkBox]:checked").each(function(){
-
-
                   var data = new Object();
-                    data["reservationId"] = reservationId;
+                    //data["reservationId"] = ;
 
                     dataList.push(data);
 
@@ -67,6 +113,7 @@
                     cache : false,
                     success : function(result, status){
                         alert("삭제가 완료됐습니다.");
+                        console.log(reservationId);
                         location.href='/room/reservationHist';
                     },
                     error : function(jqXHR, status, error){
@@ -75,10 +122,39 @@
                             location.href='/members/login';
                         }else{
                             alert(jqXHR.responseText);
+
                         }
                     }
                 });
             }
+ function reservationId(obj){
+            var reservationId = $("#listId").val();
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/room/deleteById/" + reservationId;
+
+            $.ajax({
+                url : url,
+                type : "DELETE",
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType : "json",
+                cache : false,
+                success : function(result, status){
+                    location.href='/room/reservationHist';
+                },
+                error : function(jqXHR, status, error){
+                    if(jqXHR.status == '401'){
+                        alert('로그인 후 이용해주세요.');
+                        location.href='/members/login';
+                    }else{
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
     </script>
 </th:block>
 <!-- 사용자 CSS 추가 -->
@@ -110,43 +186,29 @@
 <div layout:fragment="content">
     <br/><br />
     <h1 size="20">예약 내역<br /></h1>
-
-
+<input type="hidden" th:value="${reservationId}" id="Lists">
     <form method="post" enctype="multipart/form-data" th:object="${List}">
         <table align="center" class="reserveInfo">
-            <tr align="center" id="list" >
+            <tr align="center" id="list">
                 <td>no</td>
-                <td>선택</td>
-                <td>성인 투숙객 수(명)</td>
-                <td>어린이 투숙객 수(명)</td>
+                <td>예약 객실 종류</td>
                 <td>체크인</td>
                 <td>체크아웃</td>
-                <td>객실</td>
-                <td>금액(원)</td>
-                <td>조식 인원</td>
                 <td>예약시간</td>
             </tr>
                 <tr th:each="lists : ${List}">
                     <td class="text-center align-middle"
                         th:text="${lists.id}">
                     </td>
-                    <td><input type="checkbox" name="reservationChkBox" id="reservationId" th:value="${lists.id}"></td>
-                    <td th:text="${lists.adultCount}"></td>
-                    <td th:text="${lists.childrenCount}"></td>
+                    <td><a th:href="'/room/reservationDtl/'+${lists.id}"  th:text="${lists.type}"></a></td>
                     <td th:text="${lists.checkIn}"></td>
                     <td th:text="${lists.checkOut}"></td>
-                    <td th:text="${lists.type}"></td>
-                    <td th:text="${lists.price}"></td>
-                    <td th:text="${lists.breakfast}"></td>
                     <td th:text="${lists.reservationTime}"></td>
-
         </tr>
-
             <tr align="center">
                 <td colspan="8">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <input type="button" id="btn" value="예약 취소" onclick="deleteById()" />
                     <input type="submit" id="btn" value="전체 취소" th:formaction="@{'/room/deleteAll'}" />
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 </td>
 
         </tr>

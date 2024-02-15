@@ -47,17 +47,22 @@ private final MemberService memberService;
 private final MemberRepository memberRepository;
 private final HttpSession httpSession;
     @GetMapping( value = "/reservationHist")
-    public String reservationHist(Long reservationId, Model model, HttpSession httpSession,
+    public String reservationHist( Long reservationId,Model model, HttpSession httpSession,
                                   Principal principal,ItemSearchDto itemSearchDto, Optional<Integer> page, ReservationDto reservationDto,Reservation reservation){
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5 );
         Page<MainItemDto> items = itemService.getMainItemPage(itemSearchDto, pageable);
         String name = memberService.loadMemberName(principal,httpSession);
+        List<Reservation> reservationList =reservationService.getmemberIdList(principal,httpSession);
+        List<Reservation> all = reservationService.getAll();
+
+
         model.addAttribute("name",name);
-        model.addAttribute("List",reservationService.getmemberIdList(principal,httpSession));
-        model.addAttribute("reservationId",reservationId);
-        model.addAttribute("items",items);;
+        model.addAttribute("List",reservationList);
+        model.addAttribute("items",items);
         model.addAttribute("itemSearchDto",itemSearchDto);
         List<Reservation> reservations = new ArrayList<>();
+
+
 
 
 
@@ -90,55 +95,31 @@ private final HttpSession httpSession;
         reservationService.deletByeAll();
         return "redirect:/";
     }
+    @GetMapping(value = "/reservationDtl/{reservationId}")
+    public String reservationDtl(@PathVariable("reservationId")Long reservationId,Principal principal,
+                                 HttpSession httpSession,Model model){
+            String name =memberService.loadMemberName(principal,httpSession);
+        Member email =memberService.findMember(httpSession,principal);
+        System.out.println(email.getRole() +" 등급 분기");
+        model.addAttribute("role",email.getRole());
+            Reservation reservation=reservationService.getReservationId(reservationId);
+            model.addAttribute("reservation",reservation);
+            model.addAttribute("name",name);
+        return "/order/reservationDtl";
+    }
 
 
     @PostMapping(value = "/deleteById/{reservationId}")
     public @ResponseBody
     ResponseEntity deleteById(@PathVariable("reservationId")Long reservationId,ReservationDto reservationDtos,
-                              Principal principal, HttpSession httpSession,ItemFormDto itemFormDto, OrderDto orderDto,ItemSearchDto itemSearchDto,
-                              ReservationStatus reservationStatus) throws Exception {
-        /*Long memberId = reservationService.deleteByMemberId(principal,httpSession);
-        if (memberId == null){
-            return new ResponseEntity<String>("삭제할 예약목록을 선택해주세요",HttpStatus.FORBIDDEN);
-        }*/
-        // String a = "abc" + "def"
-        // StringBuilder a;
-        // a.append("abc");
-        // a.append("def");
-        /*if(bindingResult.hasErrors()){
-            StringBuilder sb = new StringBuilder();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for(FieldError fieldError : fieldErrors){
-                sb.append(fieldError.getDefaultMessage());
-            }
-            return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
-        }*/
-        // 로그인 정보 -> Spring Security
-        // principal.getName() (현재 로그인된 정보)
-        String reservationCancel;
-        Long reservationIds;
-        Reservation reservation1;
-        Reservation reservation;
-        Reservation reservation2;
-        Reservation reservation3;
-        List<Reservation> reservationList =reservationService.getmemberIdList(principal,httpSession);
+                              Principal principal, HttpSession httpSession,ItemFormDto itemFormDto, OrderDto orderDto,ItemSearchDto itemSearchDto, Model model) throws Exception {
         try {
-
-        //reservation1= reservationService.getReservationId(reservationId);
-           // reservation1=reservationService.getReservationId(reservationId);
-            //reservation1=  reservationService.cancelReservation(reservationId);
-
-            //reservation1= reservationService.cancelReservation(reservationId);
-
-
-            //reservation= reservationService.reservationOk(reservation2.getId(),reservationDtos,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
-            reservationIds=reservationService.deleteByReservationId(reservationId);
-             //reservationCancel = reservation.cancelReservation(reservation1);
-             //reservationId = reservationService.reservationDelete(reservation);
+            reservationService.deleteByReservationId(reservationId);
         }catch (Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<Long>(reservationIds, HttpStatus.OK);
+
+        return new ResponseEntity<Long>(reservationId, HttpStatus.OK);
     }
 
 }

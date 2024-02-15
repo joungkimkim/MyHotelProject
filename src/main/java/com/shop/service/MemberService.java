@@ -72,8 +72,6 @@ public class MemberService implements UserDetailsService {
         if (principal != null) {
             if (member1 != null) {
                 String email = (String) httpSession.getAttribute("email");
-                System.out.println(member1 + "memberService1");
-                System.out.println(email + " memberService2");
                 memberRepository.save(member1);
                 return email;
             } else {

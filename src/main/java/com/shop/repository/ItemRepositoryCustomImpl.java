@@ -106,4 +106,9 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom{
         long total = results.getTotal();
         return new PageImpl<>(content, pageable, total);
     }
+
+    @Override
+    public List<MainItemDto> getMainItemPages(ItemSearchDto itemSearchDto) {
+        return null;
+    }
 }

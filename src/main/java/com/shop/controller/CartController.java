@@ -1,13 +1,14 @@
 package com.shop.controller;
 
-import com.shop.dto.CartDetailDto;
-import com.shop.dto.CartItemDto;
-import com.shop.dto.CartOrderDto;
+import com.shop.dto.*;
 import com.shop.service.CartService;
+import com.shop.service.ItemService;
 import com.shop.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ public class CartController {
     private final CartService cartService;
     private final MemberService memberService;
     private final HttpSession httpSession;
+    private final ItemService itemService;
 
     @PostMapping(value = "/cart")
     public @ResponseBody
@@ -51,9 +53,11 @@ public class CartController {
     }
 
     @GetMapping(value = "/cart")
-    public String orderHist(Principal principal, Model model){
+    public String orderHist(Principal principal, Model model, ItemSearchDto itemSearchDto){
         List<CartDetailDto> cartDetailDtoList = cartService.getCartList(principal,httpSession);
+        List<MainItemDto> items = itemService.getMainItemPages(itemSearchDto);
         model.addAttribute("cartItems",cartDetailDtoList);
+        model.addAttribute("items",items);
         String name = memberService.loadMemberName(principal,httpSession);
         model.addAttribute("name",name);
         return "/cart/cartList";

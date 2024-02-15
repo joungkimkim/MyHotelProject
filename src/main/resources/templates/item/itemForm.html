@@ -47,7 +47,7 @@
 <div layout:fragment="content">
     <div class="col-8 mx-auto">
         <form role="form" class="container" method="post" enctype="multipart/form-data" th:object="${itemFormDto}">
-            <p class="h2">상품 등록</p>
+            <p class="h2">객실 등록</p>
 
             <input type="hidden" th:field="*{id}">
 
@@ -143,7 +143,7 @@
                 <div class="row" th:each="itemImgDto, status: ${itemFormDto.itemImgDtoList}">
                     <div class="input-group mb3">
                         <label class="image input-group-text" th:text="${not #strings.isEmpty(itemImgDto.oriImgName)} ?
-                    ${itemImgDto.oriImgName} : '상품이미지'+ ${status.index+1}"></label>
+                    ${itemImgDto.oriImgName} : '객실 이미지'+ ${status.index+1}"></label>
                         <input type="file"  class="imageFile form-control" name="itemImgFile">
                         <input type="hidden" name="itemImgIds" th:value="${itemImgDto.id}">
                     </div>

@@ -7,70 +7,95 @@
     <link rel="stylesheet" href="../css/roomCSS.css">
     <th:block layout:fragment="script">
         <script th:inline="javascript">
-            function clickBtn(){
-            const boxs = document.querySelectorAll(".imgss > img");
-                  const img1 =document.getElementById("showimg0").src;
-                  const img2 =document.getElementById("showimg1").src;
+            $(document).ready(function(){
+                  let dots = document.getElementsByClassName("img-thumbnail");
+                        for (i = 0; i < dots.length; i++) {
+                         dots[0].className += " active";
+                          }
+            clickBtn();
+ });
+
+           function clickBtn(){
+           const boxs = document.querySelectorAll(".imgDiv > img");
+                 const img1 =document.getElementById("showimg0").src;
+                 const img2 =document.getElementById("showimg1").src;
                   const img3 =document.getElementById("showimg2").src;
-                    boxs.forEach((el, index) => {
-                    el.onclick = () => {
-                    if(index == 0){
-                           document.getElementById("img2").src = img1;
-                    }
+
+                   boxs.forEach((el, index) => {
+                   el.onclick = () => {
+                           let dots = document.getElementsByClassName("img-thumbnail");
+                        for (i = 0; i < dots.length; i++) {
+                         dots[i].className = dots[i].className.replace(" active", "");
+
+                        }
+                        dots[index].className += " active";
+                        if(index == 0){
+                        document.getElementById("img2").src = img1;
+
+
+                   }
                     else if(index == 1){
+
                          document.getElementById("img2").src = img2;
-                    }
+
+
+                   }
                     else{
-                          document.getElementById("img2").src = img3;
-                    }
-                    }
-                    });
-            }
+
+                         document.getElementById("img2").src = img3;
+
+
+                   }
+                   }
+                   });
+           }
         </script>
     </th:block>
 <style>
     .mgb-15{
-               margin-bottom:15px;
-           }
-           .mgt-30{
-               margin-top:30px;
-           }
-           .mgt-50{
-               margin-top:50px;
-           }
-           .repImgDiv{
-               margin-right:15px;
-               height:500px;
-               width:120%;
-               margin: auto;
-           }
-           .repImg{
-               width:100%;
-               height:500px;
-           }
-           .wd50{
-               height:auto;
-               width:50%;
-           }
-           .textAlignCenter {
-               text-align: center;
-           }
-           .imgss>img {
-             opacity: 0.6;
-             width: 300px;
-             height: 300px;
-           }
-           .active,
-           .imgss>img:hover {
-             opacity: 1;
-           }
+                   margin-bottom:15px;
+               }
+               .mgt-30{
+                   margin-top:30px;
+               }
+               .mgt-50{
+                   margin-top:50px;
+               }
+               .repImgDiv{
+                   margin-right:15px;
+                   height:500px;
+                   width:120%;
+                   margin: auto;
+               }
+               .repImg{
+                   width:100%;
+                   height:500px;
+               }
+               .wd50{
+                   height:auto;
+                   width:50%;
+               }
+               .textAlignCenter {
+                   text-align: center;
+               }
 
-           .detailFont {
-               font-size: 15px;
-           }
-            li{
-            list-style: none;
-    }
+               .img-thumbnail {
+                 opacity: 0.6;
+                 width: 300px;
+                 height: 300px;
+               }
+               .active,
+               .img-thumbnail:hover {
+                 opacity: 1;
+               }
+
+
+               .detailFont {
+                   font-size: 15px;
+               }
+                li{
+                list-style: none;
+        }
 </style>
 </th:block>
 
@@ -125,12 +150,12 @@
 
         <div class="container">
                 <div class="repImgDiv">
-                    <div class="imgss">
-                    <img class="rounded repImg" name="targetImg" src="/images/img/deluxe.jpg"  id="showimg0"
+                    <div class="imgDiv">
+                    <img class="img-thumbnail" name="targetImg" src="/images/img/deluxe.jpg"  id="showimg0"
                              onclick="clickBtn()" >
-                    <img class="rounded repImg" name="targetImg" src="/images/img/deluxe2.jpg"  id="showimg1"
+                    <img class="img-thumbnail" name="targetImg" src="/images/img/deluxe2.jpg"  id="showimg1"
                         onclick="clickBtn()" >
-                    <img class="rounded repImg" name="targetImg" src="/images/img/deluxebathroom.jpg"  id="showimg2"
+                    <img class="img-thumbnail" name="targetImg" src="/images/img/deluxebathroom.jpg"  id="showimg2"
                          onclick="clickBtn()" >
                     </div>
                 </div>
