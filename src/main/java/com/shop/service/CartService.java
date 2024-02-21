@@ -1,24 +1,19 @@
 package com.shop.service;
 
-import com.shop.dto.CartDetailDto;
-import com.shop.dto.CartItemDto;
-import com.shop.dto.CartOrderDto;
-import com.shop.dto.OrderDto;
-import com.shop.entity.Cart;
-import com.shop.entity.CartItem;
-import com.shop.entity.Item;
-import com.shop.entity.Member;
-import com.shop.repository.CartItemRepository;
-import com.shop.repository.CartRepository;
-import com.shop.repository.ItemRepository;
-import com.shop.repository.MemberRepository;
+import com.shop.dto.*;
+import com.shop.entity.*;
+import com.shop.repository.*;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.thymeleaf.util.StringUtils;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +27,11 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final OrderService orderService;
     private final MemberService memberService;
+    private final ReservationRepository reservationRepository;
 
-    public Long addCart(CartItemDto cartItemDto, String email){
-        Item item = itemRepository.findById(cartItemDto.getItemId())
+    public Long addCart(ItemSearchDto itemSearchDto, String email, Long itemId, LocalDate checkIn, LocalDate checkOut, int breakfast,
+                        int price, int adultCount, int childrenCount, int count, String type){
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(EntityExistsException::new);
         Member member = memberRepository.findByEmail(email);
 
@@ -44,13 +41,14 @@ public class CartService {
             cartRepository.save(cart);
         }
 
-        CartItem savedCartItem = cartItemRepository.findByCartIdAndItemId(cart.getId(),item.getId());
+        CartItem savedCartItem = cartItemRepository.findByCartIdAndItemId(cart.getId(),itemId);
         if(savedCartItem != null){
-            savedCartItem.addCount(cartItemDto.getCount());
+            savedCartItem.addCount(count);
             return savedCartItem.getId();
         }
         else{
-            CartItem cartItem = CartItem.createCartItem(cart, item, cartItemDto.getCount());
+            CartItem cartItem = CartItem.createCartItem(cart, item, checkIn, checkOut,  breakfast,
+             price,  adultCount,  childrenCount,  count,  type,member);
             cartItemRepository.save(cartItem);
             return cartItem.getId();
         }
@@ -63,6 +61,7 @@ public class CartService {
         Member member = memberRepository.findByEmail(email);
 
         Cart cart = cartRepository.findByMemberId(member.getId());
+
         System.out.println(member.getId() +" member id 조회 CartService");
         if(cart == null){
             return cartDetailDtoList;
@@ -72,11 +71,10 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
-    public boolean validateCartItem(Long cartItemId, Principal principal,HttpSession httpSession){
+    public boolean validateCartItem(@PathVariable("itemId") Long itemId, Principal principal, HttpSession httpSession){
         String email = memberService.loadMemberEmail(principal,httpSession);
         Member curMember = memberRepository.findByEmail(email);
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(EntityExistsException::new);
+        CartItem cartItem = cartItemRepository.findByItemId(itemId);
         Member savedMember = cartItem.getCart().getMember();
 
         if(!StringUtils.equals(curMember.getEmail(),savedMember.getEmail())){
@@ -84,14 +82,13 @@ public class CartService {
         }
         return true;
     }
-    public void updateCartItemCount(Long cartItemId, int count){
-        CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(EntityExistsException::new);
+    public void updateCartItemCount(@PathVariable("itemId") Long itemId, int count){
+        CartItem cartItem = cartItemRepository.findByItemId(itemId);
         cartItem.updateCount(count);
     }
 
-    public void deleteCartItem(Long cartItemId){
-        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(EntityExistsException::new);
+    public void deleteCartItem(@PathVariable("itemId") Long itemId){
+        CartItem cartItem = cartItemRepository.findByItemId(itemId);
         cartItemRepository.delete(cartItem);
     }
 

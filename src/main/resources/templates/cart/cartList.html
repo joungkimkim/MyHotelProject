@@ -6,7 +6,6 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 </head>
-
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function(){
@@ -14,27 +13,25 @@
                 getOrderTotalPrice();
             });
         });
-
         function getOrderTotalPrice(){
             var orderTotalPrice = 0;
             $("input[name=cartChkBox]:checked").each(function(){
-                var cartItemId = $(this).val();
-                var price = $("#price_" + cartItemId).attr("data-price");
-                var count = $("#count_" + cartItemId).val();
+                var itemId = $(this).val();
+                var price = $("#price_" + itemId).attr("data-price");
+                var count = $("#count_" + itemId).val();
                 orderTotalPrice += price * count;
             });
 
             $("#orderTotalPrice").html(orderTotalPrice+'원');
         }
-
         function changeCount(obj){
             var count = obj.value;
-            var cartItemId = obj.id.split('_')[1];
-            var price = $("#price_"+cartItemId).data("price");
+            var itemId = obj.id.split('_')[1];
+            var price = $("#price_"+itemId).data("price");
             var totalPrice = count * price;
-            $("#totalPrice_" + cartItemId).html(totalPrice+"원");
+            $("#totalPrice_" + itemId).html(totalPrice+"원");
             getOrderTotalPrice();
-            updateCartItemCount(cartItemId, count);
+            updateCartItemCount(itemId, count);
         }
         function checkAll(){
             if($("#checkall").prop("checked")){
@@ -45,12 +42,11 @@
             }
             getOrderTotalPrice();
         }
-
-        function updateCartItemCount(cartItemId, count){
+        function updateCartItemCount(itemId, count){
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
 
-            var url = "/cartItem/" + cartItemId + "?count=" + count;
+            var url = "/cartItem/" + itemId + "?count=" + count;
 
             $.ajax({
                 url : url,
@@ -73,36 +69,34 @@
                 }
             });
         }
+         function deleteCartItem(obj){
+                var itemId = obj.dataset.id;
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
 
-        function deleteCartItem(obj){
-            var cartItemId = obj.dataset.id;
-            var token = $("meta[name='_csrf']").attr("content");
-            var header = $("meta[name='_csrf_header']").attr("content");
+                var url = "/cartItem/" + itemId;
 
-            var url = "/cartItem/" + cartItemId;
-
-            $.ajax({
-                url : url,
-                type : "DELETE",
-                beforeSend : function(xhr){
-                    xhr.setRequestHeader(header, token);
-                },
-                dataType : "json",
-                cache : false,
-                success : function(result, status){
-                    location.href='/cart';
-                },
-                error : function(jqXHR, status, error){
-                    if(jqXHR.status == '401'){
-                        alert('로그인 후 이용해주세요.');
-                        location.href='/members/login';
-                    }else{
-                        alert(jqXHR.responseText);
+                $.ajax({
+                    url : url,
+                    type : "DELETE",
+                    beforeSend : function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    },
+                    dataType : "json",
+                    cache : false,
+                    success : function(result, status){
+                        location.href='/cart';
+                    },
+                    error : function(jqXHR, status, error){
+                        if(jqXHR.status == '401'){
+                            alert('로그인 후 이용해주세요.');
+                            location.href='/members/login';
+                        }else{
+                            alert(jqXHR.responseText);
+                        }
                     }
-                }
-            });
-        }
-
+                });
+            }
         function orders(){
             var token = $("meta[name='_csrf']").attr("content");
             var header = $("meta[name='_csrf_header']").attr("content");
@@ -113,7 +107,7 @@
             var paramData = new Object();
 
             $("input[name=cartChkBox]:checked").each(function(){
-                var cartItemId = $(this).val();
+                var itemId = $(this).val();
                 var data = new Object();
                 data["cartItemId"] = cartItemId;
                 dataList.push(data);
@@ -148,6 +142,62 @@
             });
         }
 
+    // 카카오결제
+$(function(){
+    $("#btn-kakao-pay").click(function(){
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        // 필수입력값을 확인.
+        var name = $("#form-payment input[name='pay-name']").val();
+        var tel = $("#form-payment input[name='pay-tel']").val();
+        var email = $("#form-payment input[name='pay-email']").val();
+
+        if(name == ""){
+            $("#form-payment input[name='pay-name']").focus()
+        }
+        if(tel == ""){
+            $("#form-payment input[name='pay-tel']").focus()
+        }
+        if(email == ""){
+            $("#form-payment input[name='pay-email']").focus()
+        }
+
+        // 결제 정보를 form에 저장한다.
+
+            var itemId = $("#itemId").val();
+                var paramData = {
+                    itemId : $("#itemId").val(),
+                    searchCheckOut : $("#searchCheckOut").val(),
+                    searchCheckIn : $("#searchCheckIn").val(),
+                    searchCount : $("#count").val(),
+                }
+                var param = JSON.stringify(paramData);
+
+        // 카카오페이 결제전송
+        $.ajax({
+                type:'get'
+                ,url:'/kakao/pay/' + itemId
+                ,data:{
+                   itemId : itemId,
+                    searchCheckOut : $("#searchCheckOut").val(),
+                    searchCheckIn : $("#searchCheckIn").val(),
+                    searchPrice : $("#price").val(),
+                    searchCount : $("#count").val(),
+                    searchAdultCount:  $("#searchAdultCount").val(),
+                    searchChildrenCount:  $("#searchChildrenCount").val(),
+                    searchRoomType : $("#searchRoomType").val(),
+                },
+             beforeSend : function(xhr){
+                        /*데이터 전송하기 전에 헤더이 csrf 값을 설정*/
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success:function(response){
+                    location.href = response.next_redirect_pc_url
+
+            }
+        })
+    })
+})
     </script>
 </th:block>
 <!-- 사용자 CSS 추가 -->
@@ -180,13 +230,16 @@
         .fs24{
             font-size:24px;
         }
+
     </style>
 </th:block>
 
 <div layout:fragment="content" class="content-mg">
-    <h2 class="mb-4">장바구니 목록</h2>
+    <div class="text-center mt-4 mb-4" style="padding: 20px 0;">
+        <h2>장바구니 목록</h2>
+    </div>
     <div>
-        <table class="table">
+        <table class="table" th:each="cartItem : ${cartItem}" th:object="${itemSearchDto}">
             <colgroup>
                 <col width="15%">
                 <col width="70%">
@@ -195,50 +248,66 @@
             <thead>
             <tr class="text-center">
                 <td>
-                    <input type="checkbox" id="checkall" onclick="checkAll()"> 전체선택
+                    <input type="checkbox" id="checkall" onclick="checkAll()" th:value="${cartItem.item.id}"> 전체선택
                 </td>
                 <td>상품정보</td>
                 <td>상품금액</td>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="cartItem : ${cartItems}">
+            <tr>
                 <td class="text-center align-middle">
-                    <input type="checkbox" name="cartChkBox" th:value="${cartItem.cartItemId}">
+                    <input type="checkbox" name="cartChkBox" id="itemId" th:value="${cartItem.item.id}">
                 </td>
                 <td class="d-flex">
                     <div class="repImgDiv align-self-center">
-                        <img th:src="${cartItem.imgUrl}" class="rounded repImg" th:alt="${cartItem.itemNm}">
+                        <img>
                     </div>
                     <div class="align-self-center">
-                        <span th:text="${cartItem.itemNm}" class="f24 font-weight-bold"></span>
+                        <span th:text="${cartItem.type}" class="f24 font-weight-bold"></span>
+                        <input type="hidden"  th:value="${searchType}">
                         <div class="fs18 font-weight-light">
-                                <span class="input-group mt-2">
-                                    <span th:id="'price_' + ${cartItem.cartItemId}" th:data-price="${cartItem.price}"
-                                          th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                                    <span class="input-group mt-2">
+                                        <span th:id="'price_' + ${cartItem.item.id}" th:data-price="${cartItem.price}"
+                                              th:text="${cartItem.price} + '원'" class="align-self-center mr-2">
+                                              <input type="hidden"  th:value="${searchPrice}">
+                                        </span>
+
+                                        <input type="hidden" id="price" th:value="${cartItem.price * cartItem.count}" />
+                                        <input type="number" name="count" id="count" th:id="'count_' + ${cartItem.item.id}"
+                                               th:value="${cartItem.count}" min="1" onchange="changeCount(this)"
+                                               style="margin-left:10px;">
+                                            <input type="hidden"  th:value="${searchCount}">
+                                        <br>
+                                        <div>
+                                         <input type="text" name="searchCheckIn" id="searchCheckIn"
+                                                th:value="${cartItem.checkIn}" style="margin-left:10px; width:200px;"/>
+                                        <input type="hidden"  th:value="${searchCheckIn}">
+                                           <input type="text"  id="searchCheckOut"
+                                                  th:value="${cartItem.checkOut}" style="margin-left:10px  width:200px;"/>
+                                        <input type="hidden"  th:value="${searchCheckOut}">
+                                            </div>
+                                        <div>
+                                          <button type="button" class="close" aria-label="Close" style="background-color:black;"
+                                                  th:data-id="${cartItem.item.id}"  onclick="deleteCartItem(this)">
+                                        </button>
+</div>
                                     </span>
-                                    <input type="number" name="count" th:id="'count_' + ${cartItem.cartItemId}"
-                                           th:value="${cartItem.count}" min="1" onchange="changeCount(this)">
-                                    <button type="button" class="close" aria-label="Close">
-                                        <span aria-hidden="true" th:data-id="${cartItem.cartItemId}"
-                                              onclick="deleteCartItem(this)">&times;</span>
-                                    </button>
-                                </span>
                         </div>
                     </div>
                 </td>
                 <td class="text-center align-middle">
-                    <span th:id="'totalPrice_'+${cartItem.cartItemId}" name="totalPrice"
-                          th:text="${cartItem.price * cartItem.count} + '원'"></span>
+                            <input type="text" th:id="'totalPrice_'+${cartItem.item.id}" name="totalPrice" id="totalPrice"
+                                  th:value="${cartItem.price * cartItem.count} + '원'" />
                 </td>
             </tr>
             </tbody>
         </table>
-        <h2 class="text-center">
-            총 주문 금액 : <span id="orderTotalPrice" class="text-danger">0원</span>
-        </h2>
+        <h4 class="text-center">
+            총 주문 금액 : <span id="orderTotalPrice" style="color:#770000;">0원</span>
+        </h4>
         <div class="text-center mt-3">
-            <button type="button" class="btn btn-success btn-lg" onclick="location.href='/user/reservation3/'+${reservationId}}">예약하기</button>
+            <button type="button" class="btn btn-success btn-lg" id="btn-kakao-pay">주문하기</button>
         </div>
     </div>
 </div>

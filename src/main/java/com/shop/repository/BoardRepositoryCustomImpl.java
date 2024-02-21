@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.thymeleaf.util.StringUtils;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
         this.queryFactory = new JPAQueryFactory(em); // JPAQueryFactory 실질적인 객체가 만들어 집니다.
     }
     private  BooleanExpression regDtsAfter(String searchDateType){ // all, 1d, 1w, 1m 6m
-        LocalDateTime dateTime = LocalDateTime.now(); // 현재시간을 추출해서 변수에 대입
+        LocalDate dateTime = LocalDate.now(); // 현재시간을 추출해서 변수에 대입
 
         if(StringUtils.equals("all",searchDateType) || searchDateType == null){
             return null;

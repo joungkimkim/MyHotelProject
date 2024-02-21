@@ -79,7 +79,17 @@ public class UserController {
         LocalDateTime date1 = itemSearchDto.getSearchCheckOut().atStartOfDay();
         LocalDateTime date2 = itemSearchDto.getSearchCheckIn().atStartOfDay();
         int betweenDays = (int) Duration.between(date2, date1).toDays();
-        System.out.println(itemSearchDto.getSearchCheckIn() + "해당아이템 체크인 날짜");
+
+
+        httpSession.setAttribute("itemId",itemId);
+        httpSession.setAttribute("checkIn",itemSearchDto.getSearchCheckIn());
+        httpSession.setAttribute("checkOut",itemSearchDto.getSearchCheckOut());
+        httpSession.setAttribute("count",itemSearchDto.getSearchCount());
+        httpSession.setAttribute("adultCount",itemSearchDto.getSearchAdultCount());
+        httpSession.setAttribute("childCount",itemSearchDto.getSearchChildrenCount());
+        httpSession.setAttribute("breakfast",itemSearchDto.getSearchBreakfast());
+        httpSession.setAttribute("price",itemSearchDto.getSearchPrice());
+        httpSession.setAttribute("type",itemSearchDto.getSearchRoomType());
 
         model.addAttribute("items", items);
         model.addAttribute("days",betweenDays);
@@ -122,7 +132,7 @@ public class UserController {
             System.out.println(betweenDays + " 날짜 차이");
 
             System.out.println((itemSearchDto.getSearchPrice()* betweenDays) + (itemSearchDto.getSearchBreakfast() * 20000) + "총 합계");
-             reservation = reservationService.reservationOk(id,reservationDto,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
+            // reservation = reservationService.reservationOk(id,reservationDto,principal,httpSession,itemFormDto,orderDto,itemSearchDto);
              itemSearchDto.setReservationStatus(ReservationStatus.OK);
             System.out.println(reservation);
             System.out.println("예약완료");

@@ -26,7 +26,7 @@ public interface ItemRepository extends JpaRepository<Item,Long>, QuerydslPredic
     List<Item> findByItemDetailByNative(@Param("itemDetail") String itemDetail);
 
     @Query(value = "SELECT * FROM item where item_id=?", nativeQuery = true)
-    Item findByItemId(@Param("id") Long id);
+    Item findByItemId(@Param("itemId") Long itemId);
 
 
     @Query(value = "SELECT * FROM item", nativeQuery = true)

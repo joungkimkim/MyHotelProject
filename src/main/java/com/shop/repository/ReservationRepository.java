@@ -31,6 +31,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long>, 
     Reservation findByReservationId(@Param("reservationId")Long reservationId);
     @Query(value = "SELECT * FROM  reservation  where member_id=? ORDER BY reservation_id DESC", nativeQuery = true)
     List<Reservation> findByMemberId(@Param("id") Long id);
+    @Query(value = "SELECT * FROM  reservation  where member_id=?", nativeQuery = true)
+    Reservation findByMembersId(@Param("member_id") Long memberId);
 
-
+    @Query(value = "SELECT * FROM reservation where item_id=?",nativeQuery = true)
+    Reservation findByItemId(@Param("item_id") Long itemId);
 }

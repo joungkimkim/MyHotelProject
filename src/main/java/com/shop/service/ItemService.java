@@ -66,12 +66,12 @@ public class ItemService {
         return itemFormDto;
     }
 
-    public Long updateItem(ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList,ItemSearchDto itemSearchDto)
+    public Long updateItem(ItemFormDto itemFormDto, List<MultipartFile> itemImgFileList,ItemSearchDto itemSearchDto,Reservation reservation)
             throws Exception{
         //상품 변경
         Item item = itemRepository.findById(itemFormDto.getId()).
                 orElseThrow(EntityNotFoundException::new);
-        item.updateItem(itemFormDto, itemSearchDto);
+        item.updateItem(itemFormDto, itemSearchDto,reservation);
         //상품 이미지 변경
         List<Long> itemImgIds = itemFormDto.getItemImgIds();
 
@@ -82,20 +82,18 @@ public class ItemService {
         return item.getId();
     }
 
-    public Long itemId(ItemFormDto itemFormDto,ItemSearchDto itemSearchDto)
+    public Long itemId(ItemFormDto itemFormDto,ItemSearchDto itemSearchDto,Reservation reservation)
             throws Exception{
         //상품 변경
         Item item = itemRepository.findById(itemFormDto.getId()).
                 orElseThrow(EntityNotFoundException::new);
-        item.updateItem(itemFormDto,itemSearchDto);
-
-
+        item.updateItem(itemFormDto,itemSearchDto,reservation);
 
         return item.getId();
     }
-
-
-
+    public Item findByItemId(Long itemId){
+        return itemRepository.findByItemId(itemId);
+    }
 
     @Transactional(readOnly = true)
     public Page<Item> getAdminItemPage(ItemSearchDto itemSearchDto, Pageable pageable){

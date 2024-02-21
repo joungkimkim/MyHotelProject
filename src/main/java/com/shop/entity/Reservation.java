@@ -50,11 +50,11 @@ public class Reservation {
 
     private String name;
 
-    private Integer price;
+    private int price;
     @Column(name = "breakfast")
-    private Integer breakfast;
+    private int breakfast;
 
-    private Integer stockNumber;
+    private int stockNumber;
 
     private String reservationStatus;
     @Column(name = "reservationTime")
@@ -73,56 +73,31 @@ public class Reservation {
 
 
 
-    public static Reservation reservationRoom(Long itemId,ReservationDto reservationDtos, Member member,
-                                              Item item,ItemFormDto itemFormDto,ItemSearchDto itemSearchDto,
-                                              Principal principal, HttpSession httpSession, MemberService memberService,int count) {
+    public static Reservation reservationRoom(Member member, Item item, Principal principal, HttpSession httpSession, MemberService memberService,
+                                              String type,int price,int breakfast, int stockNumber,int adultCount,int childrenCount,LocalDate checkIn,LocalDate checkOut ) {
         Reservation reservation = new Reservation();
-        ReservationSearchDto reservationSearchDto= new ReservationSearchDto();
         String email = memberService.loadMemberEmail(principal, httpSession);
         String name = memberService.loadMemberName(principal, httpSession);
+//        LocalDateTime date1 = checkIn.atStartOfDay();
+//        LocalDateTime date2 = checkOut.atStartOfDay();
+//        int betweenDays = (int) Duration.between(date2, date1).toDays();
+
         // 카카오페이
-         if (itemSearchDto.getSearchCheckIn() == null || itemSearchDto.getSearchCheckOut() == null) {
-            LocalDate sessionCheckIn = (LocalDate) httpSession.getAttribute("checkIn");
-            LocalDate sessionCheckOut = (LocalDate) httpSession.getAttribute("checkOut");
-            int adultCount =(int) httpSession.getAttribute("adultCount");
-           int childCount = (int) httpSession.getAttribute("childCount");
-           int breakfast = (int) httpSession.getAttribute("breakfast");
-           int counts = (int) httpSession.getAttribute("count");
-             int totalPrice = (int) httpSession.getAttribute("totalPrice");
-            String type =(String) httpSession.getAttribute("type");
-            Integer price = (Integer) httpSession.getAttribute("price");
             reservation.setMember(member);
-            reservation.setPrice(totalPrice);
-            reservation.setEmail(email);
-            reservation.setName(name);
-            reservation.setCheckIn(sessionCheckIn);
-            reservation.setCheckOut(sessionCheckOut);
-            reservation.setAdultCount(adultCount);
-            reservation.setChildrenCount(childCount);
-            reservation.setBreakfast(breakfast);
-            reservation.setReservationTime(LocalDate.now());
             reservation.setType(type);
-            reservation.setReservationStatus(ReservationStatus.OK.getStringValue());
-            item.removeStock(counts);
-        }
-        // 일반 예약
-        else {
-            reservation.setMember(member);
-            reservation.setType(String.valueOf(itemSearchDto.getSearchRoomType()));
             reservation.setEmail(email);
             reservation.setName(name);
-            reservation.setBreakfast(itemSearchDto.getSearchBreakfast());
-            reservation.setAdultCount(itemSearchDto.getSearchAdultCount());
-            reservation.setChildrenCount(itemSearchDto.getSearchChildrenCount());
-            reservation.setStockNumber(reservationDtos.getCount());
-            reservation.setCheckIn(itemSearchDto.getSearchCheckIn());
-            reservation.setCheckOut(itemSearchDto.getSearchCheckOut());
+            reservation.setBreakfast(breakfast);
+            reservation.setAdultCount(adultCount);
+            reservation.setChildrenCount(childrenCount);
+            reservation.setStockNumber(stockNumber);
+            reservation.setCheckIn(checkIn);
+            reservation.setCheckOut(checkOut);
             reservation.setReservationTime(LocalDate.now());
             reservation.setItem(item);
-            reservation.setPrice((itemSearchDto.getSearchPrice()));
+            reservation.setPrice(price);
             reservation.setReservationStatus(ReservationStatus.OK.getStringValue());
-            item.removeStock(itemSearchDto.getSearchCount());
-        }
+
         return reservation;
     }
     public static Reservation update(Long reservationId) {

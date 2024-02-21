@@ -1,9 +1,5 @@
 package com.shop.service;
-
-
-import com.shop.dto.ApproveResponse;
 import com.shop.dto.ItemSearchDto;
-import com.shop.dto.OrderDto;
 import com.shop.dto.ReadyResponse;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
@@ -18,8 +14,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
-
-import java.security.Principal;
 import java.time.LocalDate;
 
 
@@ -33,24 +27,24 @@ public class KakaoPayService {
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
 
-    public ReadyResponse payReady(@PathVariable("itemId")Long itemId) {
+    public ReadyResponse payReady(@PathVariable("itemId")Long itemId,HttpSession httpSession,
+                                  String type, int price,  int count, int breakfast, int adultCount, int childCount, LocalDate checkIn,LocalDate checkOut) {
         // 카카오가 요구한 결제요청request값을 담아줍니다.
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
         ItemSearchDto itemSearchDto =new ItemSearchDto();
         parameters.add("cid", "TC0ONETIME");
-        parameters.add("itemId", String.valueOf(itemId));
         parameters.add("partner_order_id", "아이템");
         parameters.add("partner_user_id", "inflearn");
         parameters.add("item_name", "itemName");
         parameters.add("quantity", "1");
-        parameters.add("searchCheckIn", String.valueOf(itemSearchDto.getSearchCheckIn()));
-        parameters.add("searchCheckOut", String.valueOf(itemSearchDto.getSearchCheckOut()));
-        parameters.add("searchBreakfast", String.valueOf(itemSearchDto.getSearchBreakfast()));
-        parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
-        parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
-        parameters.add("searchCount", String.valueOf(itemSearchDto.getSearchCount()));
-        parameters.add("searchPrice", String.valueOf(itemSearchDto.getSearchPrice()));
-        parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));
+        parameters.add("searchCheckIn", String.valueOf(checkIn));
+        parameters.add("searchCheckOut", String.valueOf(checkOut));
+        parameters.add("searchBreakfast", String.valueOf(breakfast));
+        parameters.add("searchAdultCount", String.valueOf(adultCount));
+        parameters.add("searchChildrenCount", String.valueOf(childCount));
+        parameters.add("searchCount", String.valueOf(count));
+        parameters.add("searchPrice", String.valueOf(price));
+        parameters.add("searchRoomType", String.valueOf(type));
         parameters.add("total_amount", "3000");
         parameters.add("tax_free_amount", "0");
         parameters.add("approval_url", "http://localhost/kakao/pay/completed/"+ itemId); // 결제승인시 넘어갈 url
@@ -66,37 +60,7 @@ public class KakaoPayService {
         return readyResponse;
     }
 
-    // 결제 승인요청 메서드
-    public ApproveResponse payApprove(@PathVariable("itemId")Long itemId,
-                                      String tid, String pgToken,OrderDto orderDto ,Principal principal ,
-                                      HttpSession httpSession, ItemSearchDto itemSearchDto) {
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
-        parameters.add("cid", "TC0ONETIME");
-        parameters.add("tid", tid);
-        parameters.add("partner_order_id", "아이템"); // 주문명
-        parameters.add("partner_user_id", "inflearn");
-        parameters.add("pg_token", pgToken);
-        parameters.add("itemId", String.valueOf(itemId));
-        parameters.add("searchCheckIn", String.valueOf(itemSearchDto.getSearchCheckIn()));
-        parameters.add("searchCheckOut", String.valueOf(itemSearchDto.getSearchCheckOut()));
-        parameters.add("searchBreakfast", String.valueOf(itemSearchDto.getSearchBreakfast()));
-        parameters.add("searchCount", String.valueOf(itemSearchDto.getSearchCount()));
-        parameters.add("searchAdultCount", String.valueOf(itemSearchDto.getSearchAdultCount()));
-        parameters.add("searchChildrenCount", String.valueOf(itemSearchDto.getSearchChildrenCount()));
-        parameters.add("searchRoomType", String.valueOf(itemSearchDto.getSearchRoomType()));
-        parameters.add("searchPrice", String.valueOf(itemSearchDto.getSearchPrice()));
-       // parameters.add("order_id", String.valueOf(id));
-        // 하나의 map안에 header와 parameter값을 담아줌.
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
-        // 외부url 통신
-        RestTemplate template = new RestTemplate();
-        String url = "https://kapi.kakao.com/v1/payment/approve";
-        // 보낼 외부 url, 요청 메시지(header,parameter), 처리후 값을 받아올 클래스.
-        ApproveResponse approveResponse = template.postForObject(url, requestEntity, ApproveResponse.class);
-        //log.info("결재승인 응답객체: " + approveResponse);
 
-        return approveResponse;
-    }
     // header() 셋팅
     private HttpHeaders getHeaders() {
         HttpHeaders headers = new HttpHeaders();

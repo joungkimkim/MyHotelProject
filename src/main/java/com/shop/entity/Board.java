@@ -26,7 +26,7 @@ public class Board {
     @Column(columnDefinition = "varchar(1000)")
     private String content;
     private String writer;
-    private LocalDateTime localDate;
+    private LocalDate localDate;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -43,7 +43,7 @@ public class Board {
         String name = memberService.loadMemberName(principal,httpSession);
         board.setTitle(boardWriteFormDto.getTitle());
         board.setContent(boardWriteFormDto.getContent());
-        board.setLocalDate(LocalDateTime.now());
+        board.setLocalDate(LocalDate.now());
         board.setWriter(name);
         board.setMember(member);
         return board;

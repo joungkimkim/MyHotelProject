@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.thymeleaf.util.StringUtils;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,6 @@ public class ReservationService {
 
     }
     public List<Reservation> getmemberIdList(Principal principal , HttpSession httpSession) {
-
         String email = memberService.loadMemberEmail(principal,httpSession);
         Member member1= memberRepository.findByEmail(email);
         System.out.println(member1.getId());
@@ -50,6 +50,9 @@ public class ReservationService {
     }
     public Reservation getReservationId(@Param("reservationId") Long reservationId){
         return reservationRepository.findByReservationId(reservationId);
+    }
+    public Reservation findByMemberId(Long memberId){
+        return reservationRepository.findByMembersId(memberId);
     }
 
 
@@ -64,27 +67,22 @@ public class ReservationService {
     public void deletByeAll() {
         reservationRepository.deleteAll();
     }
-    public Reservation reservationOk(@PathVariable("itemId")Long itemId, ReservationDto reservationDtos,
-                                     Principal principal, HttpSession httpSession,ItemFormDto itemFormDto, OrderDto orderDto,ItemSearchDto itemSearchDto) throws Exception {
+    public Reservation reservationOk(@PathVariable("itemId") Long itemId,
+                                     Principal principal, HttpSession httpSession,
+                                     String type,int price, int breakfast, int stockNumber, int adultCount, int childrenCount, LocalDate checkIn, LocalDate checkOut ) throws Exception {
         String email = memberService.loadMemberEmail(principal,httpSession);
         Member member1= memberRepository.findByEmail(email);
         System.out.println(member1.getId());
-        Item item = itemRepository.findById(itemSearchDto.getItemId())
-                .orElseThrow(EntityNotFoundException::new);
+        Item item = itemRepository.findByItemId(itemId);
         Member member2 =memberRepository.findByMemberId(member1.getId());
-
-        Reservation reservation = Reservation.reservationRoom(itemId,reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
-        if (reservation == null){
-            reservation= Reservation.reservationRoom(itemId,reservationDtos,member2,item,itemFormDto,itemSearchDto,principal,httpSession,memberService,reservationDtos.getCount());
-
+        Reservation reservation = Reservation.reservationRoom(member2,item,principal,httpSession,memberService,type,price,breakfast,stockNumber,adultCount,childrenCount,checkIn,checkOut);
             reservationRepository.save(reservation);
-        }
-
         reservationRepository.save(reservation);
         return reservation;
-
     }
-
+    public Reservation findByItemId(Long itemId){
+        return reservationRepository.findByItemId(itemId);
+    }
 
     public void updateStatus(@Param("reservationId")Long reservationId,ReservationStatus reservationStatus){
         Reservation reservation =new Reservation();

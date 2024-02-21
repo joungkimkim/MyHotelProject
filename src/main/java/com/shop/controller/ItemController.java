@@ -1,6 +1,7 @@
 package com.shop.controller;
 import com.shop.dto.*;
 import com.shop.entity.Item;
+import com.shop.entity.Reservation;
 import com.shop.repository.ItemRepository;
 import com.shop.service.ItemService;
 import com.shop.service.MemberService;
@@ -91,7 +92,7 @@ public class ItemController {
     @PostMapping(value = "/admin/item/{itemId}")
     public String itemUpdate(@Valid ItemFormDto itemFormDto, BindingResult bindingResult,
                              @RequestParam("itemImgFile") List<MultipartFile> itemImgFileList,
-                             Model model, Principal principal,ItemSearchDto itemSearchDto){
+                             Model model, Principal principal, ItemSearchDto itemSearchDto, Reservation reservation){
         String name = memberService.loadMemberName(principal,httpSession);
         model.addAttribute("name",name);
         if(bindingResult.hasErrors()){
@@ -102,7 +103,7 @@ public class ItemController {
             return "item/itemForm";
         }
         try {
-            itemService.updateItem(itemFormDto, itemImgFileList,itemSearchDto);
+            itemService.updateItem(itemFormDto, itemImgFileList,itemSearchDto,reservation);
         }catch (Exception e){
             model.addAttribute("errorMessage", "상품 수정 중 에러가 발생하였습니다.");
             return "item/itemForm";

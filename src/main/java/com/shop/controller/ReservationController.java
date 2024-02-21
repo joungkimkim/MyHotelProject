@@ -63,10 +63,6 @@ private final HttpSession httpSession;
         List<Reservation> reservations = new ArrayList<>();
 
 
-
-
-
-
         return "/order/reservationHist";
     }
     @GetMapping( value = {"/adminReservationHist","/adminReservationHist/{page}"})

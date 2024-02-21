@@ -70,8 +70,11 @@ public class Item extends BaseEntity{
     )
     private List<Member> member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 
-    public void updateItem(ItemFormDto itemFormDto,ItemSearchDto itemSearchDto){
+    public void updateItem(ItemFormDto itemFormDto,ItemSearchDto itemSearchDto,Reservation reservation){
         this.itemNm = itemFormDto.getItemNm();
         this.roomType= String.valueOf(itemFormDto.getType());
         this.price = itemFormDto.getPrice();
@@ -82,6 +85,7 @@ public class Item extends BaseEntity{
         this.itemSellStatus = itemSearchDto.getSearchSellStatus();
         this.checkIn = itemFormDto.getCheckIn();
         this.checkOut = itemFormDto.getCheckOut();
+        this.reservation = reservation;
     }
 
     //경고에요 산수 경고 경고
