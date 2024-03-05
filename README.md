@@ -1,5 +1,5 @@
 ## 호텔 예약사이트 개인 프로젝트
-> [포트폴리오 주소](C:/Users/speed/Downloads/(AWS%20%EB%B0%B0%ED%8F%AC%EC%99%84%EB%A3%8C)%EA%B9%80%EC%A0%95%ED%98%84%20%EA%B0%9C%EC%9D%B8%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4%20%ED%98%B8%ED%85%94%EC%98%88%EC%95%BD%EC%82%AC%EC%9D%B4%ED%8A%B8.pdf)
+> [포트폴리오 주소](http://naver.me/xGmo4X1C)
 > [AWS 배포 주소](http://ec2-3-37-237-106.ap-northeast-2.compute.amazonaws.com:8081)
 ![image](https://github.com/joungkimkim/MyHotelProject/assets/148930569/43093685-b656-428c-85b8-0618ba829279)
 
