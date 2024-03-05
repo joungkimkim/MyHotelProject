@@ -1,8 +1,9 @@
 ## 호텔 예약사이트 개인 프로젝트
+> [포트폴리오 주소](https://burningfalls.github.io)
+> [AWS 배포 주소]([https://burningfalls.github.io](http://ec2-3-37-237-106.ap-northeast-2.compute.amazonaws.com:8081/))
 ![image](https://github.com/joungkimkim/MyHotelProject/assets/148930569/43093685-b656-428c-85b8-0618ba829279)
 
-포트폴리오 주소 : 
-AWS 배포 주소:
+
 
 프로젝트 개요
 
