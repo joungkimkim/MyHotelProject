@@ -1,4 +1,4 @@
-###호텔 예약사이트 개인 프로젝트
+## 호텔 예약사이트 개인 프로젝트
 ![image](https://github.com/joungkimkim/MyHotelProject/assets/148930569/d33f0c60-5c88-4836-81af-cc254691f953)
 
 포트폴리오 주소 : 
