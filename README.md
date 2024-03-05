@@ -1,6 +1,6 @@
 호텔 예약사이트 개인 프로젝트
 
-포트폴리오 주소 : file:///C:/Users/speed/OneDrive/%EB%B0%94%ED%83%95%20%ED%99%94%EB%A9%B4/%ED%98%B8%ED%85%94%EC%98%88%EC%95%BD%EC%82%AC%EC%9D%B4%ED%8A%B8%20%EA%B0%9C%EC%9D%B8%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4(%EA%B9%80%EC%A0%95%ED%98%84).pdf
+포트폴리오 주소 : 
 AWS 배포 주소:
 
 프로젝트 개요
